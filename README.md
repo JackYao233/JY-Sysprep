@@ -265,11 +265,11 @@ Module Description \| 模块说明：
   Alpha 0.1         ✅ Completed      Basic Sysprep     基础Sysprep自动化
                                       automation        
 
-  Alpha 0.2         🚧 Developing     Validator and     验证器与执行框架
+  Alpha 0.2         ✅ Completed     Validator and     验证器与执行框架
                                       execution         
                                       framework         
 
-  Alpha 0.3         Planned           GUI Wizard        图形化向导
+  Alpha 0.3         🚧 Developing     GUI Wizard        图形化向导
 
   Alpha 0.4         Planned           Personalization   个性化配置引擎
                                       Engine            
@@ -293,17 +293,19 @@ Module Description \| 模块说明：
 
 Current requirements:
 
--   Windows 10 / Windows 11
+-   Windows 8.x / Windows 10 / Windows 11
 -   Python 3.8+
 -   Administrator privilege
+-   To run this software, the system must in audit mode
 
 ## 中文
 
 当前环境要求：
 
--   Windows 10 / Windows 11
+-   Windows 8.x / Windows 10 / Windows 11
 -   Python 3.8+
 -   管理员权限
+-   需保证系统处于审核模式
 
 ------------------------------------------------------------------------
 
