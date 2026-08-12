@@ -57,10 +57,11 @@ def collect_configuration(context):
     config.input_locale, config.system_locale, config.ui_language, config.user_locale = _locale_preset()
     print("\n--- OOBE 选项 ---")
     config.hide_eula = _yes_no("隐藏许可条款页面？", True)
-    config.hide_wireless = _yes_no("隐藏无线网络设置页面？", True)
-    if not context.is_server and context.family in ("Windows 10", "Windows 11"):
+    if context.supports_wireless_oobe:
+        config.hide_wireless = _yes_no("隐藏无线网络设置页面？", True)
+    if context.supports_online_accounts:
         config.hide_online_accounts = _yes_no("隐藏在线账户页面？", False)
-    if context.is_server:
+    if context.supports_local_account_screen:
         config.hide_local_account_screen = _yes_no("隐藏 Server 管理员账户页面？", False)
     config.protect_your_pc = 1 if _yes_no("启用推荐的保护设置？", False) else 3
     config.owner = _text("注册所有者（可留空）")

@@ -73,11 +73,12 @@ def create_xml(context, config):
     shell = _component(oobe, "Microsoft-Windows-Shell-Setup", architecture)
     options = ET.SubElement(shell, "OOBE")
     _text(options, "HideEULAPage", str(config.hide_eula).lower())
-    _text(options, "HideWirelessSetupInOOBE", str(config.hide_wireless).lower())
+    if context.supports_wireless_oobe:
+        _text(options, "HideWirelessSetupInOOBE", str(config.hide_wireless).lower())
     _text(options, "ProtectYourPC", config.protect_your_pc)
-    if config.hide_online_accounts:
+    if context.supports_online_accounts and config.hide_online_accounts:
         _text(options, "HideOnlineAccountScreens", "true")
-    if context.is_server and config.hide_local_account_screen:
+    if context.supports_local_account_screen and config.hide_local_account_screen:
         _text(options, "HideLocalAccountScreen", "true")
     _text(shell, "TimeZone", config.time_zone)
     if config.uses_local_account():

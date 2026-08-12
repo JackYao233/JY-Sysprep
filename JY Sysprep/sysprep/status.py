@@ -1,4 +1,5 @@
 import os
+import winreg
 
 
 def check_environment():
@@ -78,3 +79,19 @@ def check_environment():
 
 
     return result
+
+
+def check_audit_mode():
+    try:
+        key = winreg.OpenKey(
+            winreg.HKEY_LOCAL_MACHINE,
+            r"SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\State"
+        )
+        image_state, _ = winreg.QueryValueEx(key, "ImageState")
+        winreg.CloseKey(key)
+        return image_state in (
+            "IMAGE_STATE_SPECIALIZE_RESEAL_TO_AUDIT",
+            "IMAGE_STATE_GENERALIZE_RESEAL_TO_AUDIT"
+        )
+    except Exception:
+        return False
