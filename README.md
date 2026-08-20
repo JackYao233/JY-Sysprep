@@ -269,7 +269,7 @@ Module Description \| 模块说明：
                                       execution         
                                       framework         
 
-  Alpha 0.3         🚧 Developing     GUI Wizard        图形化向导
+  Alpha 0.3         🚧 Developing     TUI Wizard        文本化向导
 
   Alpha 0.4         Planned           Personalization   个性化配置引擎
                                       Engine            
