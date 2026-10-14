@@ -48,10 +48,10 @@ Answer files are generated dynamically with ElementTree. Template files remain i
 3. Follow the console wizard. Keep test mode enabled to review the generated answer file first.
 4. To perform system preparation, run the wizard with test mode disabled and confirm the final configuration.
 
-1. 从 [Alpha 0.3 发布页](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.3) 下载 `JY.Sysprep.Alpha.0.3.exe`。
-2. 在 Windows 审核模式中以管理员身份运行。
-3. 按文本向导完成配置，建议先保持测试模式，检查生成的应答文件。
-4. 正式封装时关闭测试模式，并在最后确认配置。
+一、 从 [Alpha 0.3 发布页](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.3) 下载 `JY.Sysprep.Alpha.0.3.exe`。
+二、 在 Windows 审核模式中以管理员身份运行。
+三、 按文本向导完成配置，建议先保持测试模式，检查生成的应答文件。
+四、 正式封装时关闭测试模式，并在最后确认配置。
 
 The packaged executable includes the Python runtime; a separate Python installation is unnecessary. Both test and formal modes require Audit Mode and successful startup checks. Formal execution runs Sysprep with `/generalize` and the selected completion action.
 
