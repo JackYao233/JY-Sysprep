@@ -3,141 +3,115 @@
 **Windows Sysprep Automation and Image Deployment Framework**  
 **Windows 系统封装与镜像部署自动化框架**
 
-JY Sysprep is an open-source tool for configuring Windows system preparation through a step-by-step console wizard. The project aims to grow into a modular Windows image customization and deployment platform.
+JY Sysprep configures Windows system preparation through a graphical wizard or a text-based interface. Alpha 0.4 restores the GUI, retains the TUI, adds an isolated Vista runtime, and improves Windows 11 multiboot deployment.
 
-JY Sysprep 是一个开源 Windows 系统封装工具，通过分步骤文本向导配置并执行 Sysprep。项目计划逐步扩展为模块化的 Windows 镜像定制与部署平台。
+JY Sysprep 通过图形或文本向导配置并执行 Windows 系统封装。Alpha 0.4 恢复 GUI、保留 TUI，加入 Vista 独立运行环境，并改进 Windows 11 多系统封装流程。
 
-[Download Alpha 0.3 / 下载](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.3) · [Source / 源码](https://github.com/JackYao233/JY-Sysprep/tree/main/repository) · [Issues / 问题反馈](https://github.com/JackYao233/JY-Sysprep/issues)
+[Download Alpha 0.4 / 下载](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.4) · [Source / 源码](repository/) · [Issues / 问题反馈](https://github.com/JackYao233/JY-Sysprep/issues)
 
 ## Version Status | 版本状态
 
-**Alpha 0.3 is available as a prerelease.** It starts directly in TUI mode and does not load GUI or Tkinter. Alpha 0.4 is under development, with a restored GUI and retained TUI access.
+**Alpha 0.4 is available as a prerelease.** The unified x64 ZIP includes separate runtimes for Windows Vista SP2 and Windows 7–11. Python and VMware Tools are not required on the target system.
 
-**Alpha 0.3 已发布为预发布版本。** 程序直接进入 TUI 文本向导，不加载 GUI 或 Tkinter。Alpha 0.4 正在开发，计划恢复 GUI，并保留 TUI 入口。
+**Alpha 0.4 已发布为预发布版本。** 统一 x64 ZIP 按系统选择 Vista SP2 或 Windows 7–11 运行环境，目标机无需安装 Python 或 VMware Tools。
+
+The package preserves the tested executables without recompilation, so the modern interface retains its candidate 7 label and the Vista runtime retains its original experimental label. Alpha 0.3 remains available as an older TUI release.
+
+发行包原样保留已测试程序，因此现代界面仍显示 candidate 7，Vista 保留原实验版标识。Alpha 0.3 作为历史 TUI 版本保留。
 
 ## Features | 当前功能
 
 | Feature | 功能 |
 | --- | --- |
-| Windows version, architecture and administrator status detection | Windows 版本、架构及管理员权限检测 |
-| Audit Mode detection and Sysprep file checks | 审核模式检测及 Sysprep 文件预检 |
-| Five-step console configuration wizard | 五步文本配置向导 |
+| Six-step GUI with F8 switching to TUI | 六步 GUI，按 F8 切换 TUI |
+| Windows version, architecture, permissions and Audit Mode checks | 系统版本、架构、权限及审核模式检测 |
 | Audit/OOBE and shutdown/reboot/quit options | Audit/OOBE 及关机、重启、退出选项 |
 | Computer name, time zone, language and region settings | 计算机名、时区、语言及区域设置 |
-| OOBE options offered according to system capabilities | 按系统能力提供 OOBE 选项 |
-| Registered owner and organization settings | 注册所有者及组织信息设置 |
+| OOBE options adapted to system capabilities | 按系统能力提供 OOBE 选项 |
 | Optional local administrator account and automatic sign-in | 可选本地管理员账户及自动登录 |
-| Dynamic x86/x64 answer file generation | 动态生成 x86/x64 应答文件 |
-| Configuration summary and final confirmation | 执行前配置摘要及最终确认 |
-| Program logging and Sysprep failure log collection | 程序日志及 Sysprep 失败日志收集 |
-
-The wizard follows **Basic settings → Language and region → OOBE → Account → Confirmation**. Test mode is enabled by default and only generates an answer file. Final confirmation defaults to cancellation; Ctrl+C cancels during configuration.
-
-向导顺序为 **基本设置 → 语言区域 → OOBE → 账户 → 确认**。默认开启测试模式，仅生成应答文件；最终确认默认取消。配置过程中可按 Ctrl+C 取消。
-
-Answer files are generated dynamically with ElementTree. Template files remain in the source tree, but the current generator does not read them.
-
-应答文件由 ElementTree 动态生成。源码中保留 XML 模板，但当前生成流程不读取模板。
+| Test mode enabled by default; final confirmation before deployment | 默认测试模式，正式封装前再次确认 |
+| BCD backup and verification for the multiboot workflow | 多系统流程的 BCD 备份及核对 |
+| Elevated, windowless helper for Windows 11 multiboot deployment | Win11 多系统封装使用管理员无控制台辅助进程 |
+| Execution records, interrupted-run notifications and diagnostics | 执行记录、中断提醒及诊断采集 |
 
 ## Quick Start | 快速开始
 
-### Packaged executable | 使用独立程序
+1. Download [`JY.Sysprep.Alpha.0.4.x64.zip`](https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.4/JY.Sysprep.Alpha.0.4.x64.zip) and extract the entire archive.
+2. Run `Start.cmd` as administrator in the Windows Audit Mode environment.
+3. Use the GUI, press **F8** to switch to the TUI, or use `Start GUI.cmd` / `Start TUI.cmd` directly.
+4. Keep test mode enabled first to review the generated answer file. Disable it and confirm the configuration when ready for formal system preparation.
 
-1. Download `JY.Sysprep.Alpha.0.3.exe` from the [Alpha 0.3 release](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.3).
-2. Run it as administrator in a Windows Audit Mode environment.
-3. Follow the console wizard. Keep test mode enabled to review the generated answer file first.
-4. To perform system preparation, run the wizard with test mode disabled and confirm the final configuration.
+一、 下载并完整解压 Alpha 0.4 ZIP。  
+二、 在 Windows 审核模式中以管理员身份运行 `Start.cmd`。  
+三、 默认进入 GUI；按 **F8** 切换 TUI，或使用对应启动脚本。  
+四、 先通过测试模式检查应答文件，正式封装时关闭测试模式并确认配置。
 
-一、 从 [Alpha 0.3 发布页](https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.3) 下载 `JY.Sysprep.Alpha.0.3.exe`。
-二、 在 Windows 审核模式中以管理员身份运行。
-三、 按文本向导完成配置，建议先保持测试模式，检查生成的应答文件。
-四、 正式封装时关闭测试模式，并在最后确认配置。
+Keep the full directory structure. Both executables under `runtimes/modern/` must remain together. Use the ZIP package for Alpha 0.4; the historical build 3 single EXE is an older artifact.
 
-The packaged executable includes the Python runtime; a separate Python installation is unnecessary. Both test and formal modes require Audit Mode and successful startup checks. Formal execution runs Sysprep with `/generalize` and the selected completion action.
+请保留完整目录结构，现代主程序与辅助程序必须位于同一目录。Alpha 0.4 请使用 ZIP 发行包；历史 build 3 单文件 EXE 属于旧构建。
 
-独立程序包含 Python 运行库，无需另行安装 Python。测试与正式模式均要求处于审核模式并通过启动检查。正式执行会调用 Sysprep `/generalize`，随后按所选设置关机、重启或退出。
+Published ZIP SHA256:
 
-### Run from source | 从源码运行
-
-The Alpha 0.3 source has been checked with **Python 3.7.9 x64** and uses only the Python standard library at runtime. The source currently resides in the repository's **`repository/` subdirectory**.
-
-Alpha 0.3 源码已使用 **Python 3.7.9 x64** 检查，运行时仅使用 Python 标准库。当前 GitHub 源码位于 **`repository/` 子目录**。
-
-```powershell
-git clone https://github.com/JackYao233/JY-Sysprep.git
-cd JY-Sysprep\repository
-py -3.7 -m venv .venv37
-.\.venv37\Scripts\python.exe main.py
+```text
+0B51BE3C43F8DB415A70AF234BA1899806E26FB4AD8FC4CF67EB902CCCCC69C2
 ```
-
-In PyCharm, open `repository/`, select `.venv37/Scripts/python.exe`, and use that directory as the working directory. Run `main.py`. Use the Terminal for hidden password input.
-
-在 PyCharm 中打开 `repository/`，选择 `.venv37/Scripts/python.exe`，将该目录设为工作目录，运行 `main.py`。密码隐藏输入建议使用 Terminal。
 
 ## Testing and Compatibility | 测试与兼容性
 
-The developer reports VMware testing on Windows 7, 8, 8.1, 10 and 11. Single-system testing was reported as normal. Boot failures after Sysprep were observed in the multi-boot test environment, including Windows 8 and Windows 11. This does not establish universal compatibility or prove a Windows-version-specific defect.
+On 2026-10-16, the developer reported successful VM regression testing within the following scope:
 
-开发者已在 VMware 中测试 Windows 7、8、8.1、10、11，并反馈单系统测试正常。多系统测试环境曾在 Sysprep 后出现启动异常，涉及 Windows 8 和 Windows 11。上述结果属于当前测试环境记录，不代表所有系统版本及配置均已通过兼容性验证，也不能据此判定为某一 Windows 版本的普遍问题。
+2026-10-16，开发者反馈以下虚拟机测试范围通过：
 
-Alpha 0.3 does not include automatic BCD backup or multi-boot repair. Multi-boot protection is being developed for Alpha 0.4. Windows Server mappings exist in the source but have not been deployment-validated. ARM64 is not validated.
+| System | Reported scope / 已反馈范围 |
+| --- | --- |
+| Windows Vista SP2 x64 | Original GUI deployment/OOBE and unified launcher regression; single-system only / 原 GUI 封装、OOBE 及统一入口回归，限单系统 |
+| Windows 7 / 8 / 8.1 / 10 x64 | Unified-package regression / 统一包回归 |
+| Windows 11 x64, multiboot | No-Tools deployment, automatic restart, OOBE and desktop; subsequent unified-package shutdown/OOBE / 无 Tools 封装、自动重启、OOBE、桌面及统一包关机/OOBE |
 
-Alpha 0.3 不包含自动 BCD 备份与多系统引导修复；相关保护正在 Alpha 0.4 中开发。源码包含 Windows Server 适配映射，但尚未完成部署验证；ARM64 未验证。
+These results cover the tested VMs and configurations, not every Windows build or option combination. Windows Server, x86 and ARM64 are outside this release's validation scope. Vista multiboot deployment is not supported by this package.
 
-When creating an account, its password is written in plain text to the answer file, including test output. Keep these files private.
+上述结果适用于已测试虚拟机及配置，不代表所有 Windows Build 或选项组合均已验证。Windows Server、x86、ARM64 不在本次验收范围；本包不支持 Vista 多系统正式封装。
 
-创建账户时，密码会以明文写入应答文件，测试文件也具有相同行为，请妥善保管。
+The windowless helper resolved the reported Windows 11 interruption in the tested environment. The evidence supports a terminal-lifecycle-related explanation, but does not establish that Windows Terminal was uninstalled or prove a single root cause.
+
+无控制台辅助程序使本次 Win11 测试环境中的中断问题得到解决。结果支持终端生命周期相关的判断，但尚不能证明 Windows Terminal 被卸载或认定唯一根因。
+
+[Validation details / 验收记录](repository/docs/UNIFIED-CANDIDATE-8.md) · [Release notes / 发布说明](repository/docs/RELEASE-NOTES-Alpha-0.4.en.md)
 
 ## Development and Build | 开发与构建
 
-Run these commands from `repository/` with the Python 3.7 environment created above:
+Source files live in **`repository/`**. The modern runtime uses **Python 3.7.9 x64**; Vista uses a separate **Python 3.6.8 x64** environment. In PyCharm, open `repository/` and use it as the working directory.
 
-在 `repository/` 中创建上述 Python 3.7 环境后执行：
+源码位于 **`repository/`**。现代环境使用 Python 3.7.9 x64，Vista 使用独立 Python 3.6.8 x64 环境。在 PyCharm 中打开该目录并将其设为工作目录。
+
+Modern distribution entry: `modern_main.py`. Windowless helper entry: `admin_worker_main.py`. Vista entry: `vista_main.py`. Source mode is suitable for UI/configuration development; the independent deployment flow requires the packaged main executable and helper.
+
+现代发行入口为 `modern_main.py`，无控制台辅助入口为 `admin_worker_main.py`，Vista 入口为 `vista_main.py`。源码模式适合界面和配置开发；独立封装流程需要配套打包程序。
+
+Run these build commands from `repository/`, using an isolated build environment with Python 3.7 x64:
 
 ```powershell
-.\.venv37\Scripts\python.exe -B -m unittest discover -s tests -v
-.\.venv37\Scripts\python.exe -m pip install -r requirements-build.txt
-.\.venv37\Scripts\python.exe -m PyInstaller --noconfirm --distpath dist --workpath build "JY Sysprep Alpha 0.3.spec"
+python -m pip install -r requirements-build.txt
+python -m PyInstaller --noconfirm --distpath dist/modern --workpath build/modern "JY Sysprep Alpha 0.4 Modern.spec"
+python -m PyInstaller --noconfirm --distpath dist/modern --workpath build/worker "JY Sysprep Alpha 0.4 Worker.spec"
 ```
 
-The build uses PyInstaller 5.13.2. Executables are generated in `dist/` and distributed as release assets.
+Keep `JY Sysprep Modern.exe` and `JY Sysprep Worker.exe` together. Unified packaging renames the main executable to `JY Sysprep.exe` while preserving its contents.
 
-构建使用 PyInstaller 5.13.2，生成的 exe 位于 `dist/`，通过 Release 附件分发。
+自动化测试源文件保留。涉及执行流程的测试、正式封装、引导修改和电源操作应在可恢复的隔离虚拟机中进行；测试替身不是唯一隔离措施。请先阅读 [测试执行限制](repository/TESTING.md)。
 
-## Project Structure | 项目结构
+Tests and deployment flows can invoke real system operations. Review [TESTING.md](repository/TESTING.md) before execution and use a disposable, isolated VM for runtime validation.
 
-```text
-JY-Sysprep/
-├── README.md                    Project homepage / 项目首页
-└── repository/                  Source and development files / 源码及开发文件
-    ├── main.py                  TUI entry point / TUI 入口
-    ├── core/                    Context and logging / 上下文与日志
-    ├── osdetect/                Windows detection / 系统检测
-    ├── sysprep/                 Configuration, XML and execution / 配置、XML 与执行
-    ├── gui/                     Retained GUI source / 保留的 GUI 源码
-    ├── utils/
-    ├── tests/
-    ├── docs/
-    ├── requirements-build.txt
-    ├── JY Sysprep Alpha 0.3.spec
-    └── LICENSE
-```
+## Diagnostics and Contributions | 诊断与反馈
 
-## Roadmap | 开发路线
+If deployment is interrupted, preserve the current state and run `Diagnostics/Collect.cmd` from the release package. Include the Windows build, selected options, single-system/multiboot layout, last recorded stage and relevant diagnostics in an issue. Do not repeat Sysprep on the interrupted image.
 
-| Version | Status / 状态 | Scope / 范围 |
-| --- | --- | --- |
-| Alpha 0.1 | Released / 已发布 | Basic Sysprep automation / 基础封装自动化 |
-| Alpha 0.2 | Released / 已发布 | Audit Mode and Sysprep checks / 审核模式及 Sysprep 检查 |
-| Alpha 0.3 | Prerelease available / 预发布已提供 | TUI wizard and Python 3.7 environment / 文本向导及 Python 3.7 环境 |
-| Alpha 0.4 | In development / 开发中 | GUI with retained TUI, workflow and multi-boot protection / GUI 与 TUI 双模式、流程及多系统保护 |
-| Later / 后续 | Planned / 计划中 | Personalization, deployment experience and DISM/WIM image management / 个性化、部署体验及 DISM/WIM 镜像管理 |
+若封装中断，请保留现场并运行发行包内的 `Diagnostics/Collect.cmd`。反馈时提供系统 Build、选项、启动布局、最后阶段及诊断记录。不要在已中断的镜像上重复封装。
 
-## Contributing and License | 贡献与许可
+Generated answer files may contain plaintext account passwords, including test output. Remove passwords and personal information before sharing files; do not publish an entire job directory.
 
-Suggestions, issue reports and contributions are welcome. For boot or deployment issues, include the Windows build, virtualization version if applicable, selected Sysprep options, single-system/multi-boot layout and relevant logs. Remove passwords and personal information before sharing.
+生成的应答文件可能包含明文账户密码，测试输出也可能如此。分享前移除密码和个人信息，不要公开整个作业目录。
 
-欢迎提交建议、问题反馈及代码贡献。反馈启动或部署问题时，请提供 Windows Build、虚拟化软件版本（如适用）、Sysprep 选项、单系统或多系统布局及相关日志；分享前请移除密码和个人信息。
+Suggestions, issue reports and contributions are welcome. Personalization and broader image-management features remain future work.
 
-[MIT License / MIT 许可](https://github.com/JackYao233/JY-Sysprep/blob/main/repository/LICENSE)
-
+欢迎提交建议、问题反馈及贡献。个性化配置与更广泛的镜像管理功能仍为后续计划。
