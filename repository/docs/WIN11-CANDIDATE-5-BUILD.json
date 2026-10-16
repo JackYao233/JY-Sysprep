@@ -1,0 +1,17 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Win11 Candidate 5 x64.zip",
+  "sha256": "D39319E25BE9C4CFB9B66BB025291C8E7F2B45303EA6C5DD8B921D6A0B91A72C",
+  "bytes": 9244550,
+  "buildSucceeded": true,
+  "hostRuntimeExecuted": false,
+  "testsExecuted": false,
+  "windows11DeploymentValidated": false,
+  "workerContext": "launching elevated administrator",
+  "usesTaskScheduler": false,
+  "scope": "Candidate 5; isolated VM check pending",
+  "userAdminProbePassed": true,
+  "userAdminProbeEvidence": "User screenshot: completed; elevated administrator; session 1; no Sysprep, BCD or power action",
+  "userAdminProbeEnvironment": "User restored pre-Tools snapshot before candidate 5 test",
+  "userFormalOutcome": "completion_unconfirmed_stopped_at_sysprep_running",
+  "userFormalEvidence": "Provided status.json and worker.log: elevated administrator session 1, preflight and BCD backup passed, no Sysprep return or power record; bootstrap empty"
+}

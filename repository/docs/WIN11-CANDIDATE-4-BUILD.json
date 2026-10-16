@@ -1,0 +1,10 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Win11 Candidate 4 x64.zip",
+  "sha256": "261DC047ED82B95E246ED5A115E99AA14609B426D1B954CA25FE8F8747A2D66D",
+  "bytes": 9238019,
+  "buildSucceeded": true,
+  "hostRuntimeExecuted": false,
+  "testsExecuted": false,
+  "windows11DeploymentValidated": false,
+  "scope": "Win11 candidate 4; isolated VM validation pending"
+}

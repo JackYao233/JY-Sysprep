@@ -1,0 +1,17 @@
+{
+  "file": "JY Sysprep Alpha 0.4.exe",
+  "version": "Alpha 0.4",
+  "build": "3",
+  "change": "Exit immediately after closing GUI; preserve TUI exit prompt and multiboot protection",
+  "python": "3.7.9 x64",
+  "pyinstaller": "5.13.2",
+  "bytes": 9379479,
+  "sha256": "6D6D38FCAE4A17334EA002B26651776B722257BD18FECFB457464DE2178FBC2D",
+  "testsPassed": 48,
+  "guiTestsPassed": 9,
+  "archiveVerified": true,
+  "helpLaunchVerified": true,
+  "realSysprepTested": false,
+  "realBcdModified": false,
+  "previousExecutable": "dist/archive/JY Sysprep Alpha 0.4-build2.exe"
+}

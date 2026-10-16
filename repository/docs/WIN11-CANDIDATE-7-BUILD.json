@@ -1,0 +1,19 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Win11 Candidate 7 x64.zip",
+  "sha256": "212E53C1F3DEFE746D640F3130571C62556822FCA25D58D2345E22ECAC0176D8",
+  "bytes": 15622080,
+  "buildSucceeded": true,
+  "hostRuntimeExecuted": false,
+  "testsExecuted": false,
+  "windows11DeploymentValidated": true,
+  "workerPeSubsystem": 2,
+  "workerConsole": false,
+  "rootCauseConfirmed": false,
+  "hypothesis": "console and Windows Terminal lifecycle during generalization; not proven",
+  "validationBasis": "User-reported single successful deployment, automatic reboot, OOBE and desktop; success-stage logs not yet collected",
+  "validationDate": "2026-10-16 Europe/London",
+  "userAdminProbePassed": true,
+  "userWorkerHasConsole": false,
+  "validationEnvironment": "Windows 11 multi-boot VM restored to pre-VMware Tools snapshot",
+  "crossVersionRegressionValidated": false
+}

@@ -1,0 +1,83 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Unified Candidate 1 x64.zip",
+  "sha256": "8B20E0F77824F6AF18775ECF992A6437B6F2260F645F686C66BBCCA9BC716AE4",
+  "bytes": 18906312,
+  "version": "Alpha 0.4 unified candidate 1",
+  "vistaSourceSha256": "4FBF008ABB6C1D4E40F63EE697B936859605D4BC6A11269FF75C86A835B0CAEC",
+  "modernPython": "3.7.9 x64",
+  "vistaPython": "3.6.8 x64",
+  "files": 987,
+  "crossVersionDeploymentValidated": false,
+  "deploymentIssues": {
+    "Windows 11": {
+      "status": "investigating",
+      "date": "2026-10-15",
+      "userReported": "Two Administrator profile directories; selected shutdown/reboot does not occur",
+      "rootCauseConfirmed": false,
+      "diagnosticArchive": "JY-Win11-Diagnostics-20261015-234916-e6f2b8.zip",
+      "osBuild": "26200.7462",
+      "finding": "Sysprep success tag created at 23:41:03 UTC+08; application log stops at child launch and BCD remains locate-based; post-Sysprep continuation unconfirmed",
+      "report": "docs/WINDOWS11-UNIFIED-INVESTIGATION.md"
+    }
+  },
+  "deploymentResults": {
+    "Windows Vista": {
+      "passed": true,
+      "date": "2026-10-15",
+      "evidence": "User confirmed Vista passed after unified candidate formal deployment instructions",
+      "scope": "Unified candidate 1; OOBE, generalize, shutdown, no account creation; first-boot setup completed per preceding test instructions",
+      "osBuild": null
+    },
+    "Windows 7": {
+      "passed": true,
+      "date": "2026-10-15",
+      "evidence": "User reported Windows 7 successful after the preceding formal deployment instructions",
+      "scope": "Unified candidate 1; OOBE, generalize, shutdown, no account creation; first-boot setup completed per preceding test instructions",
+      "osBuild": null
+    },
+    "Windows 8": {
+      "passed": true,
+      "date": "2026-10-15",
+      "evidence": "User reported Windows 8, 8.1 and 10 testing completed in the ongoing formal deployment test sequence",
+      "scope": "Unified candidate 1; OOBE, generalize, shutdown, no account creation; first-boot setup completed per preceding test instructions",
+      "osBuild": null
+    },
+    "Windows 8.1": {
+      "passed": true,
+      "date": "2026-10-15",
+      "evidence": "User reported Windows 8, 8.1 and 10 testing completed in the ongoing formal deployment test sequence",
+      "scope": "Unified candidate 1; OOBE, generalize, shutdown, no account creation; first-boot setup completed per preceding test instructions",
+      "osBuild": null
+    },
+    "Windows 10": {
+      "passed": true,
+      "date": "2026-10-15",
+      "evidence": "User reported Windows 8, 8.1 and 10 testing completed in the ongoing formal deployment test sequence",
+      "scope": "Unified candidate 1; OOBE, generalize, shutdown, no account creation; first-boot setup completed per preceding test instructions",
+      "osBuild": null
+    }
+  },
+  "crossVersionGuiPassed": true,
+  "crossVersionGuiEvidence": "User reported all tested GUIs working; platforms interpreted from the preceding Vista/7/8/8.1/10/11 test scope",
+  "crossVersionGuiDate": "2026-10-15",
+  "crossVersionGuiPlatforms": [
+    "Windows Vista",
+    "Windows 7",
+    "Windows 8",
+    "Windows 8.1",
+    "Windows 10",
+    "Windows 11"
+  ],
+  "crossVersionGuiScope": "User-reported GUI operation only; per-platform builds, patches, TUI handoff, XML generation and formal deployment not separately confirmed",
+  "archiveVerified": true,
+  "allFileHashesVerified": true,
+  "vistaPayloadUnchanged": true,
+  "routingCasesPassed": 9,
+  "missingRuntimeRejected": true,
+  "developmentHostRoute": "modern",
+  "modernHelpPassed": true,
+  "vistaGuiSelfTestPassedOnDevelopmentHost": true,
+  "pathWithSpacesAndChineseChecked": true,
+  "python37RegressionTestsPassed": 62,
+  "python36RegressionTestsPassed": 62
+}

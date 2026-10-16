@@ -1,0 +1,2 @@
+# PyInstaller 5.13.2 supports Python 3.7 and the existing Alpha 0.3 spec.
+PyInstaller==5.13.2

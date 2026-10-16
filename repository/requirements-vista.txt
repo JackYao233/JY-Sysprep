@@ -1,0 +1,2 @@
+# Only the isolated Python 3.6 Vista build needs this runtime backport.
+dataclasses==0.8; python_version < "3.7"

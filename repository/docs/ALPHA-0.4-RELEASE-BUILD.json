@@ -1,0 +1,15 @@
+{
+  "file": "JY Sysprep Alpha 0.4 x64.zip",
+  "sha256": "0B51BE3C43F8DB415A70AF234BA1899806E26FB4AD8FC4CF67EB902CCCCC69C2",
+  "bytes": 25296840,
+  "files": 995,
+  "sourceSha256": "F0F0CE6D033CA9C1554BA792F374A9DDEF0D151FB4185D29A818BFA2ADE9EC12",
+  "sourceCandidate": 8,
+  "allCandidateRuntimeFilesUnchanged": true,
+  "archiveFilesVerified": true,
+  "crossVersionDeploymentValidated": true,
+  "validationBasis": "User report, tested VM configurations only",
+  "hostRuntimeExecuted": false,
+  "programFilesRecompiled": false,
+  "githubPublished": false
+}

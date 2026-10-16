@@ -1,0 +1,13 @@
+{
+  "python": "3.6.8",
+  "detectedFamily": "Windows 11",
+  "detectedBuild": "26300",
+  "architecture": "AMD64",
+  "selectedAdapter": "ConfiguredWindowsAdapter",
+  "sharedGuiPagesChecked": 6,
+  "tkVersion": "8.6.6",
+  "fontFamily": "Microsoft YaHei UI",
+  "sysprepExecuted": false,
+  "bcdReadOrModified": false,
+  "crossVersionDeploymentValidated": false
+}

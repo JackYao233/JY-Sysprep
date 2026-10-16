@@ -1,0 +1,7 @@
+-r requirements-vista.txt
+# Separate toolchain: do not install into .venv37.
+PyInstaller==3.6
+altgraph==0.17.2
+pefile==2021.9.3
+future==0.18.3
+pywin32-ctypes==0.2.0

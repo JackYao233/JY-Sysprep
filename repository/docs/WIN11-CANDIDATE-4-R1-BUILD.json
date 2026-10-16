@@ -1,0 +1,10 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Win11 Candidate 4 R1 x64.zip",
+  "sha256": "306696B9903B994CA3983513CF1FCA828A8CAFECFE9FC08FA83DF6D91FC69B84",
+  "bytes": 9238725,
+  "buildSucceeded": true,
+  "hostRuntimeExecuted": false,
+  "testsExecuted": false,
+  "windows11DeploymentValidated": false,
+  "scope": "Candidate 4 revision 1; task XML corrected; VM background check pending"
+}

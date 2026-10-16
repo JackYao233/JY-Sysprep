@@ -1,0 +1,16 @@
+{
+  "file": "JY Sysprep Alpha 0.4 Win11 Candidate 6 x64.zip",
+  "sha256": "079AF5CB75824C848F982F447F264861C7BADA7836F3085A91BCADD27EFA4152",
+  "bytes": 9244648,
+  "buildSucceeded": true,
+  "hostRuntimeExecuted": false,
+  "testsExecuted": false,
+  "windows11DeploymentValidated": false,
+  "breakawayRequested": true,
+  "workerChecksJobMembership": true,
+  "rootCauseConfirmed": false,
+  "userAdminProbePassed": true,
+  "userFormalOutcome": "Sysprep success tag recorded; JY processes absent at collection; no BCD repair or power completion recorded",
+  "userFormalWorkerInJob": false,
+  "userFormalLauncherInJob": true
+}
