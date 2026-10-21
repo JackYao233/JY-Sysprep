@@ -25,7 +25,7 @@ def runtime_self_test():
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if dll_directory() != before:
         raise RuntimeError("DLL search path was not restored")
-    report = {"build": "Alpha 0.4 Win11 candidate 7", "python": sys.version.split()[0],
+    report = {"build": "Alpha 0.5 Server 2025 preview 1", "python": sys.version.split()[0],
               "systemCommandPassed": result.returncode == 0, "dllSearchRestored": True,
               "windowsVersionOutput": result.stdout.decode("oem", errors="replace").strip(),
               "sysprepExecuted": False, "bcdReadOrModified": False}
@@ -69,7 +69,7 @@ def run():
         return
     from main import run_application
     sys._jy_worker_capable = True
-    run_application(display_version="Alpha 0.4 Win11 candidate 7")
+    run_application(display_version="Alpha 0.5 Server 2025 preview 1")
 
 
 if __name__ == "__main__":

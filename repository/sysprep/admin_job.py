@@ -80,7 +80,8 @@ def stage_job(mode="oobe", action="quit", answer=None, identifier=None, probe=Fa
     identity = administrator_identity()
     if not probe and not re.fullmatch(r"\{[0-9a-fA-F-]{36}\}", identifier or ""):
         raise ValueError("Missing expected loader identifier")
-    helper = Path(sys.executable).parent / "JY Sysprep Worker.exe"
+    helper = Path(getattr(sys, "_jy_embedded_worker",
+                          str(Path(sys.executable).parent / "JY Sysprep Worker.exe")))
     if not helper.is_file():
         raise RuntimeError("缺少 JY Sysprep Worker.exe，请完整解压候选包，不要单独移动主程序。")
     folder = private_job_directory()
@@ -104,11 +105,16 @@ def stage_job(mode="oobe", action="quit", answer=None, identifier=None, probe=Fa
         runtime_temp.mkdir()
         environment["TEMP"] = environment["TMP"] = str(runtime_temp)
         with (folder / "bootstrap.log").open("ab") as output, system_dll_search():
+            # Python 3.6 requires close_fds=False for redirected Windows stdio.
+            # Explicit streams avoid duplicating invalid terminal handles;
+            # Python-created file descriptors are non-inheritable by default.
+            stdio = {"stdin": subprocess.DEVNULL, "stdout": output, "stderr": output}
             process = subprocess.Popen([str(folder / "worker.exe"), "--admin-deployment-worker"],
-                                       cwd=str(folder), env=environment, close_fds=True,
-                                       stdin=subprocess.DEVNULL, stdout=output, stderr=output,
-                                       creationflags=(subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
-                                                      | subprocess.CREATE_BREAKAWAY_FROM_JOB))
+                                       cwd=str(folder), env=environment, close_fds=sys.version_info >= (3, 7),
+                                       creationflags=(getattr(subprocess, "DETACHED_PROCESS", 0x00000008)
+                                                      | subprocess.CREATE_NEW_PROCESS_GROUP
+                                                      | getattr(subprocess, "CREATE_BREAKAWAY_FROM_JOB", 0x01000000)),
+                                       **stdio)
         write_record(folder / "launch.json", {"launcherPid": process.pid,
                                                "createdUtc": job["createdUtc"],
                                                "launcherInJob": identity["processInJob"],

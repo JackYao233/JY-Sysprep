@@ -1,87 +1,69 @@
 # JY Sysprep
 
-Windows 系统封装与镜像部署工具。Alpha 0.4 提供 GUI/TUI 双模式、Vista 独立运行环境和 Windows 11 多系统封装改进。
+Windows Sysprep automation with a graphical wizard and a text interface.
 
-Windows Sysprep automation with a graphical wizard, a retained TUI, isolated Vista support, and an improved Windows 11 multiboot workflow.
+Windows 系统封装工具，提供图形向导及文本模式。
 
-## Alpha 0.4
+[Releases / 下载](https://github.com/JackYao233/JY-Sysprep/releases) · [Source / 源码](.) · [Issues](https://github.com/JackYao233/JY-Sysprep/issues)
 
-- 默认启动六步 GUI；启动提示或 GUI 中按 **F8** 切换 TUI。
-- 通过 `--gui` / `--tui` 指定界面。
-- 统一 x64 便携发行包按系统选择 Vista 或现代运行环境，目标机无需安装 Python 或 VMware Tools。
-- Windows 11 多系统正式封装使用当前管理员用户的独立无控制台辅助程序。
-- 多系统流程先备份 BCD，以 Sysprep `/quit` 完成封装，再核对当前系统引导项，最后提交所选电源动作。
-- 保留阶段记录、失败日志、未完成提醒及诊断采集入口。
+## Alpha 0.5
 
-Alpha 0.4 restores the GUI while retaining F8/TUI operation. The Windows 11 multiboot flow uses a separate elevated, windowless helper. The package includes its runtimes, BCD backup/verification, execution records, and diagnostics.
+Alpha 0.5 adds Windows Server support and combines the runtimes into one **x64 EXE**, approximately **16.2 MB**. Python and VMware Tools do not need to be installed on the target system. The executable automatically extracts its embedded resources at startup.
 
-## 下载与启动 / Download and run
+Alpha 0.5 新增 Windows Server 支持，整合为约 **16.2 MB 的单个 x64 EXE**。目标系统无需安装 Python 或 VMware Tools，程序启动时自动释放内置资源。
 
-在 [GitHub Releases](https://github.com/JackYao233/JY-Sysprep/releases) 下载对应发行资产。待 Alpha 0.4 发布后，使用 `JY Sysprep Alpha 0.4 x64.zip`，完整解压并以管理员身份运行 `Start.cmd`。
+- Six-step GUI; press **F8** to switch to TUI. / 六步图形向导，F8 切换文本模式。
+- Configure Audit/OOBE, shutdown/restart/quit, computer name, language, region, accounts and automatic sign-in. / 配置启动模式、完成动作、计算机名、区域、账户及自动登录。
+- Test mode generates an answer file without running Sysprep. / 测试模式仅生成应答文件。
+- BCD backup and verification for multiboot deployment. / 多系统引导备份及核对。
+- Independent elevated, windowless helper for Windows 11 and Server 2025 multiboot deployment. / Win11、Server 2025 多系统封装使用管理员无控制台辅助进程。
+- Execution records and interrupted-run notifications. / 执行记录及中断提示。
 
-Use the ZIP release asset, extract it completely, and run `Start.cmd` as administrator. Use `Start GUI.cmd` or `Start TUI.cmd` to choose an interface directly. Keep the entire directory structure, including both modern executables.
+## Quick start / 使用方法
 
-现代程序显示 candidate 7、Vista 显示原实验版标识，是因为发布包保留了经过测试的二进制文件，没有为更换标签重新编译。历史根目录 build 3 单文件程序属于旧构建。
+1. Download `JY Sysprep Alpha 0.5 x64.exe` from Releases and compare its SHA256 with the accompanying checksum file.
+2. Run it as administrator in the target Windows **Audit Mode** environment.
+3. Keep test mode enabled first and review the generated answer file.
+4. Disable test mode, review the configuration and confirm when ready to execute Sysprep.
 
-The original candidate labels remain visible because the release package preserves the tested binaries without recompilation.
+从 Releases 下载 EXE 和校验文件；在目标系统的审核模式中以管理员身份运行。
+先用默认测试模式检查应答文件，再取消测试模式执行正式封装。
+`--gui` / `--tui` 可直接指定界面。首次启动需要自动释放内置资源，无需手动解压。
 
-## 验证范围 / Validation scope
+The tested Candidate 3 executable is distributed unchanged under the release filename. Its window title still says `single EXE candidate 3`; it has not been recompiled just to change the label.
 
-2026-10-16 用户反馈 Alpha 0.4 统一候选包 8 的虚拟机回归通过。
+发行文件由已测试的候选版 3 原样复制，窗口仍显示 `single EXE candidate 3`，未为更换标题重新编译。
 
-| 系统 / System | 用户反馈 / User-reported result |
-| --- | --- |
-| Windows Vista SP2 x64，单系统 | 原 Vista GUI 正式封装及 OOBE 通过；统一包入口回归通过 |
-| Windows 7 / 8 / 8.1 / 10 x64 | 统一包回归通过 |
-| Windows 11 x64，多系统 | 无 Tools 环境：候选 7 正式封装、自动重启、OOBE、桌面通过；统一包关机及 OOBE 通过 |
+SHA256:
 
-These are user-reported VM results within the tested configurations, not certification of every Windows build or option combination. Vista deployment is limited to single-system x64 installations. Windows Server, x86, and ARM64 are outside the release validation scope.
-
-测试详情：[统一包验收记录](docs/UNIFIED-CANDIDATE-8.md)、[英文 Release 简介](docs/RELEASE-NOTES-Alpha-0.4.en.md)。
-
-## 配置与输出 / Configuration and output
-
-可配置 Audit/OOBE、关机/重启/退出、计算机名、语言区域、时区、OOBE 选项、账户及自动登录。部分选项按系统能力启用。
-
-默认测试模式只生成应答文件；正式模式要求管理员权限、审核模式、预检及用户确认。
-创建账户时，应答文件可能包含明文密码，不要上传生成的 XML 或整个作业目录。
-
-| 内容 | 位置 |
-| --- | --- |
-| 测试应答文件 | 桌面 `JY-Sysprep-<系统名称>-unattend.xml` |
-| 普通程序日志 | 桌面 `JY Sysprep Logs` |
-| BCD 备份 | `%ProgramData%\JY Sysprep\BootBackups` |
-| Win11 独立作业记录 | `%ProgramData%\JY-Sysprep-Job-*` |
-
-默认测试模式用于查看配置和生成结果，不代表正式封装一定成功。封装前保存快照；正式流程中请勿注销或手动重启。
-
-## 源码开发 / Development
-
-现代环境使用 **Python 3.7.9 x64**；Vista 环境使用独立的 **Python 3.6.8 x64**。
-主程序运行代码主要使用标准库；构建依赖在 `requirements-build.txt` 中固定。
-Vista 的依赖与兼容性说明见 [Vista GUI 文档](docs/VISTA-GUI.md) 和 [Python 3.7 兼容性记录](docs/PYTHON-3.7-COMPATIBILITY.md)。
-
-在 PyCharm 中使用仓库根目录作为工作目录。当前现代发行入口为 `modern_main.py`，
-无控制台辅助入口为 `admin_worker_main.py`，Vista 入口为 `vista_main.py`。
-`main.py` 保留共用流程及历史入口。源码模式适合界面与配置开发；新版独立封装路径需要打包程序和辅助 EXE。
-
-在构建环境中分别打包，保持两个输出 EXE 在同一目录：
-
-```powershell
-python -m pip install -r requirements-build.txt
-python -m PyInstaller --noconfirm --distpath dist/modern --workpath build/modern "JY Sysprep Alpha 0.4 Modern.spec"
-python -m PyInstaller --noconfirm --distpath dist/modern --workpath build/worker "JY Sysprep Alpha 0.4 Worker.spec"
+```text
+D23689BD766B09EC5C32F2D746F7742085EB64DCE2D1FD6AD1015DB39CC61ACF
 ```
 
-Build the modern entry and the windowless helper separately, then keep `JY Sysprep Modern.exe` and `JY Sysprep Worker.exe` together. Renaming the main executable to `JY Sysprep.exe` is used only in the unified package layout.
+## Reported VM validation / 虚拟机验收
 
-## 检查与问题反馈 / Checks and issue reports
+On 2026-10-19, the maintainer confirmed the following x64 regression scope passed for the single-EXE Candidate 3:
 
-自动化测试源文件保留，但不应在日常宿主机直接运行涉及执行流程的测试。
-正式封装、引导修改、电源操作及运行验证均应放在可恢复的隔离虚拟机中。
-测试替身不能作为唯一隔离措施，详见 [测试执行限制](TESTING.md)。
+2026-10-19，维护者确认单 EXE 候选版 3 的以下 x64 回归范围通过：
 
-发行包的 `Check modern runtime.cmd` 和 `Check background.cmd` 用于目标虚拟机诊断。
-若正式封装中断，保留现场，运行 `Diagnostics/Collect.cmd`，并提供系统 Build、启动布局、选项、最后阶段及去除敏感信息后的日志。
+| Client / 客户端 | Server / 服务器 |
+| --- | --- |
+| Vista SP2; Windows 7, 8, 8.1, 10, 11 | Server 2008 SP2, 2008 R2, 2012, 2012 R2, 2016, 2019, 2022, 2025 |
 
-Packaging tools preserve specific historical source-archive hashes. Reproducing an archived candidate requires the matching source release ZIPs; those binaries belong in Releases and are not part of this source tree. Historical documents remain under `docs/` for traceability.
+Validation is based on maintainer VM feedback for the tested configurations; successful deployment logs were not independently reviewed for every system. Vista formal deployment remains single-system only. Server Core, domain environments, configured server roles, x86 and ARM64 are outside the validated scope. Results do not cover every build or option combination.
+
+验收基于维护者的虚拟机反馈，未逐系统独立核验成功日志。Vista 正式封装限单系统；Server Core、域环境、已配置服务器角色、x86 和 ARM64 不在已验收范围，不代表所有 Build 和选项组合均已验证。
+
+[Validation / 验收记录](docs/ALPHA-0.5-SINGLE-EXE.md) · [Release notes / 发布说明](docs/RELEASE-NOTES-Alpha-0.5.en.md)
+
+## Development / 开发
+
+Open **`repository/`** in PyCharm. The single-file build uses an isolated **Python 3.6.8 x64** environment with pinned PyInstaller 3.6 dependencies and verified app-local runtime files. Normal usage of the release does not require this build environment.
+
+在 PyCharm 中打开 `repository/`。单文件构建使用独立 Python 3.6.8 x64 环境；使用发行 EXE 无需配置开发环境。
+
+[Build instructions / 构建说明](docs/ALPHA-0.5-BUILD.md) · [Test execution boundaries / 测试执行边界](TESTING.md)
+
+Do not run deployment flows or the full test suite on an everyday host. Use an isolated, disposable VM with a recoverable snapshot. Answer files can contain account passwords; keep generated files and diagnostic logs out of Git.
+
+正式封装及完整测试套件仅在可恢复快照的隔离虚拟机中执行。应答文件可能包含密码，请勿上传生成的应答文件或真实诊断日志。

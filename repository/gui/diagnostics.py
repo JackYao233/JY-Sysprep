@@ -12,12 +12,12 @@ def diagnostic_context():
     )
 
 
-def check_gui():
+def check_gui(context=None):
     from tkinter import TclError
     from gui.app import SysprepWizardApp
     from sysprep.config import SysprepConfig
 
-    context = diagnostic_context()
+    context = context if context is not None else diagnostic_context()
     checks = [{"name": "只读 GUI 自检，禁止封装", "ok": False, "critical": True, "path": "诊断数据"}]
     preflight = {"passed": False, "checks": checks, "critical_failed": checks}
 

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<unattend>
+
+<settings pass="oobeSystem">
+
+    <component
+        name="Microsoft-Windows-Shell-Setup"
+        processorArchitecture="amd64"
+        publicKeyToken="31bf3856ad364e35"
+        language="neutral"
+        versionScope="nonSxS">
+
+        <OOBE>
+
+            <HideEULAPage>true</HideEULAPage>
+
+            <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+
+            <ProtectYourPC>3</ProtectYourPC>
+
+        </OOBE>
+
+
+        <TimeZone>
+            China Standard Time
+        </TimeZone>
+
+
+    </component>
+
+</settings>
+
+
+</unattend>

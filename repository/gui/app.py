@@ -171,8 +171,9 @@ class SysprepWizardApp:
             messagebox.showerror("环境未通过", "请修复预检问题后重新运行。", parent=self.root)
             return
         if not self.config.test_only:
-            background_note = ("\nWin11 多系统封装由当前管理员的独立进程执行；请勿注销或手动重启。"
-                               if self.context.family == "Windows 11" and getattr(sys, "_jy_worker_capable", False) else "")
+            background_note = ("\n本系统多系统封装由当前管理员的独立无控制台进程执行；请勿注销或手动重启。"
+                               if self.context.family in ("Windows 11", "Windows Server 2025")
+                               and getattr(sys, "_jy_worker_capable", False) else "")
             if not messagebox.askyesno(
                 "确认正式封装", "将执行 Sysprep /generalize /{}，完成后{}。\n将备份 BCD；多系统环境会先核对当前引导再执行完成动作。{}\n是否继续？".format(
                     self.config.mode, {"shutdown": "关机", "reboot": "重启", "quit": "退出"}[self.config.completion_action], background_note),

@@ -33,5 +33,6 @@ class ConfiguredWindowsAdapter(SysprepAdapter):
             self.context.sysprep_config.mode,
             self.context.sysprep_config.completion_action,
             self._unattend_path,
-            isolate=(self.context.family == "Windows 11" and getattr(sys, "_jy_worker_capable", False)),
+            isolate=(self.context.family in ("Windows 11", "Windows Server 2025")
+                     and getattr(sys, "_jy_worker_capable", False)),
         )

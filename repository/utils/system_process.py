@@ -49,7 +49,13 @@ def run_system_command(command, **kwargs):
     if sys.platform == "win32" and getattr(sys, "_jy_windowless_worker", False):
         # System tools launched by a windowless worker must not allocate a new
         # console (which may be delegated to the packaged Windows Terminal).
-        kwargs["creationflags"] = kwargs.get("creationflags", 0) | subprocess.CREATE_NO_WINDOW
+        kwargs["creationflags"] = kwargs.get("creationflags", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0x08000000)
+        # Python 3.6 duplicates GetStdHandle() even with captured stdout/stderr.
+        # A detached/windowless worker may have invalid console handles. Never
+        # let a system tool implicitly inherit those missing standard streams.
+        for stream in ("stdin", "stdout", "stderr"):
+            if kwargs.get(stream) is None:
+                kwargs[stream] = subprocess.DEVNULL
     if sys.platform != "win32" or not getattr(sys, "frozen", False):
         return subprocess.run(command, **kwargs)
     environment = kwargs.get("env")
