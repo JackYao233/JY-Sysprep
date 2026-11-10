@@ -1,8 +1,0 @@
-{
-  "file": "JY Sysprep Alpha 0.3.exe",
-  "python": "3.7.9 x64",
-  "pyinstaller": "5.13.2",
-  "bytes": 6487870,
-  "sha256": "25DA4A31ECD065BCFA58860484665B8CD567C0AA350525E5AAFFD3EA8A340FCB",
-  "verification": "Archive verified: python37.dll, TUI wizard and XML generator; GUI/Tkinter excluded. Executable not launched."
-}

@@ -1,0 +1,45 @@
+.investigation-main{max-width:1050px;padding-bottom:70px}
+.investigation-heading{padding:65px 0 34px}
+.investigation-heading h1{font-size:clamp(30px,4vw,46px);font-weight:700;line-height:1.35;margin:16px 0}
+.investigation-lead{font-size:18px;color:var(--muted);max-width:750px}
+.investigation-meta{font-size:12px;color:var(--muted);line-height:1.9}
+.investigation-summary{padding:28px 32px;border:1px solid #cdddF3;border-left:4px solid var(--blue);border-radius:12px;background:#f4f8fe}
+.investigation-main h2{font-size:25px;font-weight:700;line-height:1.5;margin:0 0 20px}
+.investigation-main p{line-height:1.95}
+.investigation-toc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px;margin:30px 0;color:var(--blue);font-size:13px}
+.investigation-toc a:hover{text-decoration:underline;text-underline-offset:4px}
+.investigation-section{padding-top:40px;margin-top:40px;border-top:1px solid var(--line);scroll-margin-top:105px}
+.investigation-section>p{color:#475973}
+.scope-note{font-size:12px;color:var(--muted)!important}
+.table-scroll{overflow-x:auto;margin:24px 0;border:1px solid var(--line);border-radius:10px}
+.investigation-main table{width:100%;border-collapse:collapse;min-width:630px;text-align:left;font-size:13px;line-height:1.85}
+.investigation-main th{font-weight:650;color:var(--ink);background:var(--soft)}
+.investigation-main th,.investigation-main td{padding:15px 18px;border-bottom:1px solid var(--line);vertical-align:top}
+.investigation-main tr:last-child td{border-bottom:0}
+.investigation-main td:first-child{min-width:140px}
+.audit-details{border:1px solid var(--line);border-radius:10px;padding:18px 22px}
+.audit-details summary{cursor:pointer;font-weight:600}
+.sample-hashes dt{font-size:13px;margin:17px 0 7px;font-weight:650}
+.sample-hashes dd{margin:0}
+.sample-hashes code{overflow-wrap:anywhere;font-size:12px}
+.investigation-main code{font-family:var(--font);font-size:.9em;overflow-wrap:anywhere}
+.audit-steps{padding-left:22px;color:#475973}
+.audit-steps li{padding-left:4px;margin:13px 0;line-height:1.95}
+.finding-heading{display:flex;align-items:center;flex-wrap:wrap;gap:10px 15px;margin-bottom:20px}
+.finding-heading h3{margin:0;font-size:19px;font-weight:650}
+.evidence-tag{background:#ebf7f2;color:#11705d;padding:4px 10px;border-radius:20px;font-size:11px;white-space:nowrap}
+.evidence-code{padding:22px 25px;background:#142238;color:#dbe7f5;border-radius:10px;white-space:pre-wrap;line-height:1.95;overflow-wrap:anywhere}
+.evidence-code code{font-size:13px}
+.evidence-location{font-size:12px;color:var(--muted)!important}
+.code-evidence-figure{margin:25px 0 30px}
+.code-evidence-figure>a{display:block;border-radius:10px;overflow:hidden;outline-offset:5px}
+.code-evidence-figure img{display:block;width:100%;height:auto;background:#101e32}
+.code-evidence-figure figcaption{margin-top:10px;font-size:12px;line-height:1.8;color:var(--muted)}
+.flow-list{list-style:decimal;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:20px 20px 20px 40px;border:1px solid var(--line);border-radius:10px;font-size:13px;color:#475973}
+.investigation-main blockquote{margin:22px 0;padding:22px 28px;background:var(--soft);border-left:3px solid var(--blue);font-size:16px;line-height:2}
+.investigation-notes p{font-size:13px;color:var(--muted)}
+.investigation-section a:not(.text-link){color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.investigation-heading{padding-top:38px}.investigation-lead{font-size:15px}.investigation-summary{padding:22px}.investigation-main h2{font-size:22px}.investigation-main p,.audit-steps{font-size:14px}.investigation-section{padding-top:28px;margin-top:30px}.flow-list{grid-template-columns:1fr;gap:15px}.investigation-page .nav nav{gap:18px;font-size:12px}.evidence-code{padding:18px}.evidence-code code{font-size:11px}.investigation-toc{gap:12px 18px}.investigation-main blockquote{padding:20px;font-size:14px}}
+@media(max-width:520px){.investigation-page .nav nav{display:flex;position:static;margin-left:auto;padding:0;border:0;box-shadow:none;background:none;gap:14px}.investigation-page .brand{font-size:17px}.investigation-page .brand img{width:27px;height:27px}.investigation-page .nav{gap:10px}}
+@media(max-width:700px){.investigation-toc{grid-template-columns:1fr}}
+@media(max-width:520px){.investigation-page .nav nav a:not([aria-current]){display:none}}

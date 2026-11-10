@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1267d5">
+  <meta name="description" content="JY Sysprep：轻巧的 Windows 系统封装工具。GUI 与 TUI 双模式，单个 x64 EXE，支持已验证的 Windows Vista 至 11 及 Server 2008 至 2025 系列。">
+  <title>JY Sysprep · 把 Windows 封装变简单</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css?v=23">
+  <script src="./site.js?v=9" defer></script>
+  <link rel="stylesheet" href="./theme.css?v=1">
+  <script src="./theme.js?v=1"></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-zh="跳至正文" data-en="Skip to content">跳至正文</a>
+  <header class="header">
+    <div class="nav wrap">
+      <a class="brand" href="#" aria-label="JY Sysprep"><img src="./favicon.svg" width="32" height="32" alt=""><span>JY <b>Sysprep</b></span></a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links" data-zh="菜单" data-en="Menu">菜单</button>
+      <nav id="nav-links" aria-label="Navigation">
+        <a href="#advantages" data-zh="功能" data-en="Features">功能</a>
+        <a href="#compatibility" data-zh="兼容系统" data-en="Compatibility">兼容系统</a>
+        <a href="#start" data-zh="开始使用" data-en="Get started">开始使用</a>
+        <a href="./download.html" data-zh="下载" data-en="Download">下载</a>
+        <a href="https://github.com/JackYao233/JY-Sysprep" class="github-link">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+      <button id="language" class="language" aria-label="Switch to English">EN</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <h1><span data-zh="开源，无捆绑的" data-en="Open source. No bundled extras.">开源，无捆绑的</span>
+        <span data-zh="Windows封装辅助工具" data-en="A Windows preparation assistant.">Windows封装辅助工具</span></h1>
+        <div class="hero-actions">
+          <div class="download-picker">
+          <a href="./download.html" class="button primary" data-download-toggle aria-expanded="false" aria-controls="download-options-0"><span aria-hidden="true">↓</span> <span data-zh="下载" data-en="Download">下载</span><span aria-hidden="true">⌄</span></a>
+          <div class="download-options" id="download-options-0" hidden><div class="download-options-inner">
+            <a href="https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.5/JY.Sysprep.Alpha.0.5.x64.exe" class="download-option"><span><strong>x64</strong></span><span class="download-option-note">Alpha 0.5 ↓</span></a>
+            <button type="button" class="download-option" disabled><span><strong>ARM64</strong><span>Windows on ARM</span></span><span class="download-option-note" data-zh="尚未发布" data-en="Not yet released">尚未发布</span></button>
+          </div></div>
+        </div>
+          <a class="button secondary" href="#start"><span data-zh="了解使用方法" data-en="How it works">了解使用方法</span><span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="product-stage">
+        <div class="stage-grid" aria-hidden="true"></div>
+        <div class="product-window">
+          <div class="window-title"><img src="./favicon.svg" alt="" width="18" height="18"><span>JY Sysprep</span><span class="window-controls" aria-hidden="true">− &nbsp; □ &nbsp; ×</span></div>
+          <div class="demo-tabs" role="tablist" aria-label="Interface preview">
+            <button id="tab-gui" role="tab" aria-selected="true" aria-controls="panel-gui" class="active">GUI</button>
+            <button id="tab-tui" role="tab" aria-selected="false" aria-controls="panel-tui" tabindex="-1">TUI</button>
+            <span data-zh="同一流程，两种方式" data-en="One workflow. Two interfaces.">同一流程，两种方式</span>
+          </div>
+          <div id="panel-gui" class="gui-demo" role="tabpanel" aria-labelledby="tab-gui">
+            <div class="demo-stepper"><span class="done">✓</span><b>02</b><span>03</span><span>04</span><span>05</span><span>06</span></div>
+            <h3 data-zh="按你的方式，准备系统。" data-en="Prepare Windows your way.">按你的方式，准备系统。</h3>
+            <p class="demo-intro" data-zh="基本设置 / 运行模式" data-en="Basic settings / Execution mode">基本设置 / 运行模式</p>
+            <div class="demo-field"><span data-zh="启动模式" data-en="Startup mode">启动模式</span><strong><span class="radio active-radio"></span>Audit <span class="radio"></span>OOBE</strong></div>
+            <div class="demo-field"><span data-zh="完成后动作" data-en="On completion">完成后动作</span><strong data-zh="关机" data-en="Shut down">关机</strong><span class="chevron" aria-hidden="true">⌄</span></div>
+            <div class="demo-field"><span data-zh="计算机名" data-en="Computer name">计算机名</span><code>*</code><span class="subtle" data-zh="自动生成" data-en="Automatic">自动生成</span></div>
+            <div class="demo-check"><span aria-hidden="true">✓</span><span data-zh="测试模式 · 仅生成应答文件" data-en="Test mode · Generate an answer file only">测试模式 · 仅生成应答文件</span></div>
+            <div class="demo-bottom"><span><kbd>F8</kbd> <span data-zh="切换文本模式" data-en="Switch to TUI">切换文本模式</span></span><span class="fake-next" data-zh="下一步 →" data-en="Next →">下一步 →</span></div>
+          </div>
+          <div id="panel-tui" class="terminal-demo" role="tabpanel" aria-labelledby="tab-tui" hidden>
+            <p class="terminal-header">JY Sysprep Alpha 0.5</p><p class="terminal-muted">──────────────────────────</p>
+            <p data-zh="文本配置向导 / 基本设置" data-en="Text wizard / Basic settings">文本配置向导 / 基本设置</p>
+            <p><span class="terminal-muted" data-zh="检测到系统：" data-en="Detected: ">检测到系统：</span>Windows 11</p>
+            <p><span class="terminal-muted" data-zh="测试模式：" data-en="Test mode: ">测试模式：</span><span class="terminal-green" data-zh="是" data-en="Yes">是</span></p>
+            <p><span class="terminal-muted" data-zh="启动模式：" data-en="Startup mode: ">启动模式：</span>audit</p>
+            <p><span class="terminal-muted" data-zh="完成后动作：" data-en="On completion: ">完成后动作：</span>shutdown</p>
+            <p><span class="terminal-muted" data-zh="计算机名：" data-en="Computer name: ">计算机名：</span>*</p>
+            <p class="terminal-prompt"><span data-zh="回车保留默认值；Ctrl+C 取消。" data-en="Enter keeps defaults. Ctrl+C cancels.">回车保留默认值；Ctrl+C 取消。</span><span class="cursor" aria-hidden="true">▌</span></p>
+          </div>
+        </div>
+        <p class="demo-caption"><span class="caption-line"></span><span data-zh="界面示意 · 点击 GUI / TUI 预览两种模式" data-en="Illustrative UI · Select GUI or TUI to explore">界面示意 · 点击 GUI / TUI 预览两种模式</span></p>
+      </div>
+    </section>
+
+
+<section id="advantages" class="section wrap advantages-section" aria-labelledby="advantages-title">
+      <div class="section-heading"><h2 id="advantages-title" data-zh="为什么要选JY Sysprep" data-en="Why JY Syeprep">为什么要选JY Sysprep</h2></div>
+      <div class="features-grid">
+        <article class="advantage-card"><h3><button type="button" class="advantage-trigger" aria-haspopup="dialog" aria-controls="advantage-dialog"><img class="advantage-image" src="./images/no-bundles.png" width="1653" height="952" alt="" loading="lazy"><span class="advantage-title" data-zh="无捆绑" data-en="No bundled extras">无捆绑</span><span class="advantage-more"><span class="advantage-more-arrow" aria-hidden="true">→</span><span data-zh="了解更多" data-en="Learn more">了解更多</span></span></button></h3></article>
+        <article class="advantage-card"><h3><button type="button" class="advantage-trigger" aria-haspopup="dialog" aria-controls="advantage-dialog"><img class="advantage-image" src="./images/easy-to-use-sunglasses.png" width="1654" height="951" alt="" loading="lazy"><span class="advantage-title" data-zh="易上手" data-en="Easy to use">易上手</span><span class="advantage-more"><span class="advantage-more-arrow" aria-hidden="true">→</span><span data-zh="了解更多" data-en="Learn more">了解更多</span></span></button></h3></article>
+      </div>
+    </section>
+
+    <section id="compatibility" class="compatibility section" aria-labelledby="compatibility-title">
+      <div class="wrap compatibility-section-heading"><h2 id="compatibility-title" data-zh="版本支持" data-en="Supported versions">版本支持</h2></div>
+      <div class="wrap compatibility-layout">
+        <div class="compatibility-copy"><span class="eyebrow" data-zh="Windows 客户端系统" data-en="Windows client operating systems">Windows 客户端系统</span><h2 class="compatibility-title"><span data-zh="Vista到最新系统，" data-en="Vista to latest,">Vista到最新系统，</span><br><span data-zh="这跨度有点大" data-en="a GIANT Leap!">这跨度有点大</span></h2><p data-zh="从Windows Vista开始的各大版本，JY Sysprep都能轻松应对" data-en="JY Sysprep handles major Windows releases from Windows Vista onward with ease.">从Windows Vista开始的各大版本，JY Sysprep都能轻松应对</p></div>
+        <div class="system-matrix">
+          <div class="system-group"><div class="group-heading"><h3 data-zh="Windows 客户端" data-en="Windows clients">Windows 客户端</h3><span>6</span></div><ul class="system-chips"><li>Vista <small>SP2</small> <span class="system-check" aria-hidden="true">✓</span></li><li>7 <span class="system-check" aria-hidden="true">✓</span></li><li>8 <span class="system-check" aria-hidden="true">✓</span></li><li>8.1 <span class="system-check" aria-hidden="true">✓</span></li><li>10 <span class="system-check" aria-hidden="true">✓</span></li><li>11 <span class="system-check" aria-hidden="true">✓</span></li></ul></div>
+        </div>
+      </div>
+      <div class="wrap compatibility-layout server-compatibility">
+        <div class="compatibility-copy"><span class="eyebrow" data-zh="Windows 服务器系统" data-en="Windows Server operating systems">Windows 服务器系统</span><h2 class="compatibility-title"><span data-zh="Windows Server" data-en="Reliable Sysprep tool">Windows Server</span><br><span data-zh="可靠的封装平台" data-en="for Windows Server OS">可靠的封装平台</span></h2><p data-zh="2008到2025, 历代server都已支持" data-en="From 2008 to 2025, every Windows Server generation is supported.">2008到2025, 历代server都已支持</p></div>
+        <div class="system-matrix">
+          <div class="system-group"><div class="group-heading"><h3>Windows Server</h3><span>8</span></div><ul class="system-chips"><li>2008 <small>SP2</small> <span class="system-check" aria-hidden="true">✓</span></li><li>2008 R2 <span class="system-check" aria-hidden="true">✓</span></li><li>2012 <span class="system-check" aria-hidden="true">✓</span></li><li>2012 R2 <span class="system-check" aria-hidden="true">✓</span></li><li>2016 <span class="system-check" aria-hidden="true">✓</span></li><li>2019 <span class="system-check" aria-hidden="true">✓</span></li><li>2022 <span class="system-check" aria-hidden="true">✓</span></li><li>2025 <span class="system-check" aria-hidden="true">✓</span></li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="start" class="section wrap getting-started">
+      <div class="section-heading"><h2 class="preparation-title"><span data-zh="系统封装，" data-en="Prepare your system,">系统封装，</span><span data-zh="四步走" data-en="just FOUR steps">四步走</span></h2></div>
+      <ol class="steps">
+        <li><span class="step-number">01</span><h3 data-zh="进入审核模式" data-en="Enter Audit Mode">进入审核模式</h3><p data-zh="在目标 Windows 中进入审核模式，以管理员身份运行程序。" data-en="Enter Audit Mode on the target Windows system and run JY Sysprep as administrator.">在目标 Windows 中进入审核模式，以管理员身份运行程序。</p></li>
+        <li><span class="step-number">02</span><h3 data-zh="完成向导配置" data-en="Configure the wizard">完成向导配置</h3><p data-zh="选择 Audit 或 OOBE、完成动作、计算机名、区域与账户设置。" data-en="Choose Audit or OOBE, the completion action, computer name, regional settings, and account options.">选择 Audit 或 OOBE、完成动作、计算机名、区域与账户设置。</p></li>
+        <li><span class="step-number">03</span><h3 data-zh="先生成测试文件" data-en="Review a test answer file">先生成测试文件</h3><p data-zh="Alpha 0.5 默认启用测试模式，仅生成应答文件，便于检查配置。" data-en="Alpha 0.5 enables test mode by default. Generate an answer file first and review the configuration.">Alpha 0.5 默认启用测试模式，仅生成应答文件，便于检查配置。</p></li>
+        <li><span class="step-number">04</span><h3 data-zh="确认并正式封装" data-en="Confirm and prepare">确认并正式封装</h3><p data-zh="准备好后关闭测试模式，确认配置，执行 Sysprep 并验证首次启动。" data-en="When ready, disable test mode, confirm the settings, run Sysprep, and validate the first boot.">准备好后关闭测试模式，确认配置，执行 Sysprep 并验证首次启动。</p></li>
+      </ol>
+      <div class="usage-note"><span aria-hidden="true">i</span><p data-zh="请在可恢复快照的隔离虚拟机中先行验证。" data-en="Validate in an isolated VM with a recoverable snapshot.">请在可恢复快照的隔离虚拟机中先行验证。</p></div>
+    </section>
+
+    <section id="download" class="wrap download-section">
+      <div class="download-card"><div class="download-intro"><span class="eyebrow light" data-zh="轻装出发" data-en="A lighter download">轻装出发</span><h2>JY Sysprep<br>Alpha 0.5</h2><p data-zh="一个文件，准备就绪。" data-en="One file. Ready to prepare.">一个文件，准备就绪。</p><div class="release-facts"><span>Windows x64</span><span>16.2 MB</span><span>Pre-release</span></div><div class="download-picker">
+          <a href="./download.html" class="button white" data-download-toggle aria-expanded="false" aria-controls="download-options-1"><span aria-hidden="true">↓</span> <span data-zh="下载" data-en="Download">下载</span><span aria-hidden="true">⌄</span></a>
+          <div class="download-options" id="download-options-1" hidden><div class="download-options-inner">
+            <a href="https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.5/JY.Sysprep.Alpha.0.5.x64.exe" class="download-option"><span><strong>x64</strong></span><span class="download-option-note">Alpha 0.5 ↓</span></a>
+            <button type="button" class="download-option" disabled><span><strong>ARM64</strong><span>Windows on ARM</span></span><span class="download-option-note" data-zh="尚未发布" data-en="Not yet released">尚未发布</span></button>
+          </div></div>
+        </div></div>
+      <div class="download-details"><h3 data-zh="小了约 68%，功能继续保留。" data-en="About 68% smaller. Still fully equipped.">小了约 68%，功能继续保留。</h3><p data-zh="与先前 50.7 MB 的统一候选 ZIP 相比，单 EXE 内置运行环境，启动时自动释放资源；无需安装 Python 或 VMware Tools。" data-en="Compared with the earlier 50.7 MB unified candidate ZIP. The single EXE bundles its runtime and extracts resources at startup. No Python or VMware Tools installation is required.">与先前 50.7 MB 的统一候选 ZIP 相比，单 EXE 内置运行环境，启动时自动释放资源；无需安装 Python 或 VMware Tools。</p><div class="checksum-heading"><span>SHA256</span><button id="copy-checksum" data-zh="复制校验值" data-en="Copy checksum">复制校验值</button></div><code id="checksum">D23689BD766B09EC5C32F2D746F7742085EB64DCE2D1FD6AD1015DB39CC61ACF</code><span id="copy-status" role="status" aria-live="polite"></span><div class="download-links"><a href="https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.5" data-zh="发布说明 ↗" data-en="Release notes ↗">发布说明 ↗</a><a href="https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.5/JY.Sysprep.Alpha.0.5.x64.exe.sha256" data-zh="下载校验文件 ↓" data-en="Checksum file ↓">下载校验文件 ↓</a></div><p class="version-note" data-zh="发布文件与已验收候选版 3 完全一致，因此程序窗口保留原候选版标识。" data-en="The release binary is identical to validated Candidate 3, so its original candidate label remains in the interface.">发布文件与已验收候选版 3 完全一致，因此程序窗口保留原候选版标识。</p></div></div>
+    </section>
+
+    <section class="section wrap faq-section"><div class="section-heading"><span class="eyebrow" data-zh="再了解一点" data-en="A few useful details">再了解一点</span><h2 data-zh="常见问题" data-en="Common questions">常见问题</h2></div><div class="faq-list">
+      <details><summary data-zh="需要安装 Python 或其他运行环境吗？" data-en="Do I need to install Python or a runtime?">需要安装 Python 或其他运行环境吗？</summary><p data-zh="不需要。Alpha 0.5 单 EXE 内置 Python 和界面运行库，启动时会自动释放所需文件。辅助进程在需要时独立运行，单文件分发不意味着全过程只有一个进程。" data-en="No. The Alpha 0.5 executable includes Python and GUI libraries and extracts the required files at startup. A helper runs independently when needed; a single download does not mean a single process throughout deployment.">不需要。Alpha 0.5 单 EXE 内置 Python 和界面运行库，启动时会自动释放所需文件。辅助进程在需要时独立运行，单文件分发不意味着全过程只有一个进程。</p></details>
+      <details><summary data-zh="GUI 和 TUI 的封装能力有区别吗？" data-en="Do GUI and TUI use different deployment workflows?">GUI 和 TUI 的封装能力有区别吗？</summary><p data-zh="它们共用配置与封装流程。可以按 F8 从 GUI 切换到 TUI，或通过 --gui / --tui 参数直接选择界面。" data-en="They share the configuration and deployment workflow. Press F8 to switch from GUI to TUI, or pass --gui or --tui to choose an interface directly.">它们共用配置与封装流程。可以按 F8 从 GUI 切换到 TUI，或通过 --gui / --tui 参数直接选择界面。</p></details>
+      <details><summary data-zh="是否所有 Windows 版本和配置都已验证？" data-en="Has every Windows build and configuration been tested?">是否所有 Windows 版本和配置都已验证？</summary><p data-zh="没有。兼容列表基于维护者在指定虚拟机中的回归反馈，尚未覆盖每个 Build、服务器角色或账户组合。实际使用前，请用自己的镜像和设置进行验证。" data-en="No. The compatibility list reflects maintainer feedback from specific VM configurations, not every build, server role, or account combination. Validate with your own image and settings before use.">没有。兼容列表基于维护者在指定虚拟机中的回归反馈，尚未覆盖每个 Build、服务器角色或账户组合。实际使用前，请用自己的镜像和设置进行验证。</p></details>
+      <details><summary data-zh="遇到问题，在哪里反馈？" data-en="Where can I report a problem?">遇到问题，在哪里反馈？</summary><p><span data-zh="请在 GitHub Issues 中说明系统版本、程序版本、配置与复现步骤。分享前检查日志中的账户、路径和其他个人信息。" data-en="Open a GitHub issue with your Windows version, application version, settings, and reproduction steps. Review logs for account information, paths, and other personal data before sharing.">请在 GitHub Issues 中说明系统版本、程序版本、配置与复现步骤。分享前检查日志中的账户、路径和其他个人信息。</span> <a href="https://github.com/JackYao233/JY-Sysprep/issues" data-zh="前往 Issues ↗" data-en="Open Issues ↗">前往 Issues ↗</a></p></details>
+    </div></section>
+  </main>
+  <footer class="footer"><div class="wrap footer-top"><a class="brand" href="#"><img src="./favicon.svg" width="28" height="28" alt=""><span>JY <b>Sysprep</b></span></a><p data-zh="让每一次系统准备，都更有条理。" data-en="A clearer path to a prepared system.">让每一次系统准备，都更有条理。</p><a href="https://github.com/JackYao233/JY-Sysprep" data-zh="在 GitHub 上查看项目 ↗" data-en="View the project on GitHub ↗">在 GitHub 上查看项目 ↗</a></div><div class="wrap footer-bottom"><span>JY Sysprep · JackYao233</span><span data-zh="当前公开版本 Alpha 0.5 · 0.6 为未发布开发预览" data-en="Public release: Alpha 0.5 · 0.6 is an unpublished development preview">当前公开版本 Alpha 0.5 · 0.6 为未发布开发预览</span></div></footer>
+  <dialog id="advantage-dialog" class="advantage-dialog" aria-labelledby="advantage-dialog-title">
+    <div class="advantage-dialog-heading"><h2 id="advantage-dialog-title"></h2><button type="button" class="advantage-close"><span class="visually-hidden" data-zh="关闭" data-en="Close">关闭</span><svg class="advantage-close-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><path d="M7 7L25 25M25 7L7 25" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>
+    <img class="advantage-dialog-image" alt="" width="400" height="230">
+    <div class="advantage-detail-content">
+      <div data-advantage-content="no-bundles" hidden>
+        <p data-zh="想封装一个干净的系统，却可能被工具暗中改了设置。关掉捆绑选项，也未必能避开这些问题。" data-en="You want a clean Windows image, yet a tool may change settings behind your back. Turning off bundled extras may not be enough.">想封装一个干净的系统，却可能被工具暗中改了设置。关掉捆绑选项，也未必能避开这些问题。</p>
+        <p><a class="inline-source evidence-link" href="https://www.52pojie.cn/thread-1455126-1-1.html" target="_blank" rel="noopener noreferrer" data-zh="某封装工具" data-en="A preparation tool">某封装工具</a><span data-zh="，即使关闭了可能涉及软件插件的选项，仍会在系统首次启动后生成程序，修改浏览器主页，随后尝试删除生成的文件。" data-en=" was found to generate a program on first boot, change browser homepages, and then attempt to delete the generated file, even with potential software plug-in options disabled.">，即使关闭了可能涉及软件插件的选项，仍会在系统首次启动后生成程序，修改浏览器主页，随后尝试删除生成的文件。</span></p>
+        <p><a class="inline-source evidence-link" href="./investigation.html" data-investigation-link target="_blank" rel="noopener noreferrer" data-zh="另一款软件" data-en="Another application">另一款软件</a><span data-zh="，在简介中写明专业版“0 广告、0 推广”，需 VIP 权限下载使用。" data-en=" states that its professional edition has no ads or promotions and requires VIP access to download.">，在简介中写明专业版“0 广告、0 推广”，需 VIP 权限下载使用。</span></p>
+        <p data-zh="我们的离线静态分析发现，其代码中存在浏览器主页修改及下载、运行外部文件的流程，并与 VIP 免广告状态联动。由于没有访问下载服务器或运行样本，尚不清楚实际会下载哪些文件、安装哪些软件。" data-en="Our offline static analysis found browser homepage modification and external file download-and-execution flows linked to VIP ad-free status. We did not contact the download server or run the sample, so the actual files and software remain unknown.">我们的离线静态分析发现，其代码中存在浏览器主页修改及下载、运行外部文件的流程，并与 VIP 免广告状态联动。由于没有访问下载服务器或运行样本，尚不清楚实际会下载哪些文件、安装哪些软件。</p>
+        <p data-zh="JY Sysprep 不塞软件，不加推广。源码公开，让封装过程里的操作有据可查。" data-en="JY Sysprep adds no bundled software or promotions. Its source is open so you can inspect the preparation workflow.">JY Sysprep 不塞软件，不加推广。源码公开，让封装过程里的操作有据可查。</p>
+      </div>
+      <div data-advantage-content="easy-to-use" hidden>
+        <p data-zh="官方 Sysprep 界面的功能比较单一，主要用于选择启动模式、通用化和完成后的动作。想进一步设置语言、区域、OOBE 或用户账户，就需要配合应答文件等方式配置。" data-en="The built-in Sysprep interface has a narrow scope: startup mode, generalization, and the completion action. Language, region, OOBE, and account settings require additional configuration, such as an answer file.">官方 Sysprep 界面的功能比较单一，主要用于选择启动模式、通用化和完成后的动作。想进一步设置语言、区域、OOBE 或用户账户，就需要配合应答文件等方式配置。</p>
+        <p><a class="inline-source evidence-link" href="https://learn.microsoft.com/zh-cn/windows-hardware/manufacture/desktop/sysprep-command-line-options?view=windows-11" target="_blank" rel="noopener noreferrer" data-zh="微软官方文档" data-en="Microsoft’s documentation">微软官方文档</a><span data-zh="内容繁多，设置分散在不同页面，还要弄清配置阶段和适用条件。想改几个选项，往往得先翻文档、对参数，再编写和检查应答文件。" data-en=" covers many topics across separate pages, configuration passes, and applicability rules. Even a few changes can mean reading documentation, checking parameters, and authoring and validating an answer file.">内容繁多，设置分散在不同页面，还要弄清配置阶段和适用条件。想改几个选项，往往得先翻文档、对参数，再编写和检查应答文件。</span></p>
+        <p data-zh="JY Sysprep 把常用设置放进同一个向导。选好选项，自动生成应答文件；先检查，再封装。少翻点文档，少写点脚本，把时间留给真正要做的事。" data-en="JY Sysprep brings common settings into one wizard. Choose your options, generate the answer file, then review it before running Sysprep. Spend less time looking up settings and writing scripts.">JY Sysprep 把常用设置放进同一个向导。选好选项，自动生成应答文件；先检查，再封装。少翻点文档，少写点脚本，把时间留给真正要做的事。</p>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>

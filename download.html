@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1267d5">
+  <meta name="description" content="JY Sysprep：轻巧的 Windows 系统封装工具。GUI 与 TUI 双模式，单个 x64 EXE，支持已验证的 Windows Vista 至 11 及 Server 2008 至 2025 系列。">
+  <title data-page="download">JY Sysprep · Downloads</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css?v=11">
+  <script src="./site.js?v=9" defer></script>
+  <link rel="stylesheet" href="./theme.css?v=1">
+  <script src="./theme.js?v=1"></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-zh="跳至正文" data-en="Skip to content">跳至正文</a>
+  <header class="header">
+    <div class="nav wrap">
+      <a class="brand" href="./index.html" aria-label="JY Sysprep"><img src="./favicon.svg" width="32" height="32" alt=""><span>JY <b>Sysprep</b></span></a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="nav-links" data-zh="菜单" data-en="Menu">菜单</button>
+      <nav id="nav-links" aria-label="Navigation">
+        <a href="./index.html#advantages" data-zh="功能" data-en="Features">功能</a>
+        <a href="./index.html#compatibility" data-zh="兼容系统" data-en="Compatibility">兼容系统</a>
+        <a href="./index.html#start" data-zh="开始使用" data-en="Get started">开始使用</a>
+        <a href="./download.html" aria-current="page" data-zh="下载" data-en="Download">下载</a>
+        <a href="https://github.com/JackYao233/JY-Sysprep" class="github-link">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+      <button id="language" class="language" aria-label="Switch to English">EN</button>
+    </div>
+  </header>
+
+  <main id="main" class="download-page">
+    <section class="wrap download-page-heading">
+      <a class="back-home" href="./index.html" data-zh="← 返回首页" data-en="← Back to home">← 返回首页</a>
+      <p class="eyebrow">JY Sysprep · Alpha 0.5</p>
+      <h1 data-zh="下载 JY Sysprep" data-en="Download JY Sysprep">下载 JY Sysprep</h1>
+      <p data-zh="选择适合设备的版本，开始准备你的 Windows。" data-en="Choose your version and start preparing Windows.">选择适合设备的版本，开始准备你的 Windows。</p>
+    </section>
+    <section class="wrap download-versions" aria-labelledby="versions-title">
+      <h2 id="versions-title" data-zh="选择版本" data-en="Choose a version">选择版本</h2>
+      <div class="download-version-grid">
+        <article class="download-version-card">
+          <span class="eyebrow" data-zh="当前可用" data-en="Available now">当前可用</span>
+          <h3>x64</h3>
+          <p>Alpha 0.5 · 16.2 MB · EXE</p>
+          <p data-zh="单文件便携版，内置运行环境，无需安装 Python。" data-en="A portable single EXE with its runtime included. No Python installation required.">单文件便携版，内置运行环境，无需安装 Python。</p>
+          <a class="button primary" href="https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.5/JY.Sysprep.Alpha.0.5.x64.exe" data-zh="下载 x64 ↓" data-en="Download x64 ↓">下载 x64 ↓</a>
+        </article>
+        <article class="download-version-card pending">
+          <span class="eyebrow" data-zh="后续版本" data-en="Future release">后续版本</span>
+          <h3>ARM64</h3>
+          <p>Windows on ARM</p>
+          <p data-zh="目前尚未发布 ARM64 安装包，请等待后续更新。" data-en="An ARM64 package has not been released yet. Check back for future updates.">目前尚未发布 ARM64 安装包，请等待后续更新。</p>
+          <button class="button secondary" disabled data-zh="尚未发布" data-en="Not yet released">尚未发布</button>
+        </article>
+      </div>
+    </section>
+    <section class="wrap download-guide" aria-labelledby="download-guide-title">
+      <h2 id="download-guide-title" data-zh="下载后如何使用" data-en="After downloading">下载后如何使用</h2>
+      <ol>
+        <li data-zh="核对下方 SHA256，确认文件完整。" data-en="Verify the SHA256 below to check file integrity.">核对下方 SHA256，确认文件完整。</li>
+        <li data-zh="先在隔离虚拟机中测试，并保留封装前快照。" data-en="Test in an isolated VM first and keep a snapshot from before preparation.">先在隔离虚拟机中测试，并保留封装前快照。</li>
+        <li data-zh="进入审核模式，以管理员身份运行程序，按向导完成配置。" data-en="Enter Audit Mode, run as administrator, and follow the configuration wizard.">进入审核模式，以管理员身份运行程序，按向导完成配置。</li>
+        <li data-zh="Alpha 0.5 默认开启测试模式。先生成应答文件检查，再按需执行正式封装。" data-en="Alpha 0.5 starts in test mode. Generate and inspect the answer file before running Sysprep.">Alpha 0.5 默认开启测试模式。先生成应答文件检查，再按需执行正式封装。</li>
+      </ol>
+      <a class="text-link" href="./index.html#compatibility" data-zh="查看已验证系统与适用范围 →" data-en="View tested systems and scope →">查看已验证系统与适用范围 →</a>
+    </section>
+    <section class="wrap download-verification" aria-labelledby="verification-title">
+      <h2 id="verification-title" data-zh="文件校验与发布信息" data-en="Verification and release information">文件校验与发布信息</h2>
+      <p data-zh="以下校验值对应当前 Alpha 0.5 x64 EXE。" data-en="This checksum applies to the current Alpha 0.5 x64 EXE.">以下校验值对应当前 Alpha 0.5 x64 EXE。</p>
+      <div class="checksum-heading"><span>SHA256</span><button id="copy-checksum" data-zh="复制校验值" data-en="Copy checksum">复制校验值</button></div>
+      <code id="checksum">D23689BD766B09EC5C32F2D746F7742085EB64DCE2D1FD6AD1015DB39CC61ACF</code>
+      <span id="copy-status" role="status" aria-live="polite"></span>
+      <div class="download-links">
+        <a href="https://github.com/JackYao233/JY-Sysprep/releases/tag/Alpha_0.5" data-zh="发布说明与历史版本 ↗" data-en="Release notes and version history ↗">发布说明与历史版本 ↗</a>
+        <a href="https://github.com/JackYao233/JY-Sysprep/releases/download/Alpha_0.5/JY.Sysprep.Alpha.0.5.x64.exe.sha256" data-zh="下载校验文件 ↓" data-en="Download checksum file ↓">下载校验文件 ↓</a>
+      </div>
+      <p class="version-note" data-zh="当前为 Alpha 预发布版本。0.6 仍为未发布开发预览，本页不提供其下载。" data-en="This is an alpha pre-release. Version 0.6 remains an unpublished development preview and is not offered here.">当前为 Alpha 预发布版本。0.6 仍为未发布开发预览，本页不提供其下载。</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footer-top"><a class="brand" href="./index.html"><img src="./favicon.svg" width="28" height="28" alt=""><span>JY <b>Sysprep</b></span></a><p data-zh="让每一次系统准备，都更有条理。" data-en="A clearer path to a prepared system.">让每一次系统准备，都更有条理。</p><a href="https://github.com/JackYao233/JY-Sysprep" data-zh="在 GitHub 上查看项目 ↗" data-en="View the project on GitHub ↗">在 GitHub 上查看项目 ↗</a></div><div class="wrap footer-bottom"><span>JY Sysprep · JackYao233</span><span data-zh="当前公开版本 Alpha 0.5 · 0.6 为未发布开发预览" data-en="Public release: Alpha 0.5 · 0.6 is an unpublished development preview">当前公开版本 Alpha 0.5 · 0.6 为未发布开发预览</span></div></footer>
+</body>
+</html>
