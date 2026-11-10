@@ -4,7 +4,7 @@ Windows Sysprep automation with a graphical wizard and a text interface.
 
 Windows 系统封装工具，提供图形向导及文本模式。
 
-[Releases / 下载](https://github.com/JackYao233/JY-Sysprep/releases) · [Source / 源码](repository/) · [Issues](https://github.com/JackYao233/JY-Sysprep/issues)
+[Website / 官网](https://jackyao233.github.io/JY-Sysprep/) · [Releases / 下载](https://github.com/JackYao233/JY-Sysprep/releases) · [Source / 源码](repository/) · [Issues](https://github.com/JackYao233/JY-Sysprep/issues)
 
 ## Alpha 0.5
 
