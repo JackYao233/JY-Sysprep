@@ -19,14 +19,14 @@
       <h1>某封装软件 调查</h1>
       <p class="investigation-lead">从样本代码和四次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
       <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成四次运行验证；已确认服务器下发 2345 加速浏览器安装程序，本次下载中断，安装程序未运行</p>
-      <p class="investigation-meta">研究整理：杰克姚、Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a>、<a href="./history/investigation-2026-11-22-cn.html">2026-11-22（中国大陆 IP 验证版）</a></p>
+      <p class="investigation-meta">研究整理：杰克姚、Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a>、<a href="./history/investigation-2026-11-22-cn.html">2026-11-22（中国大陆 IP 验证版）</a>、<a href="./history/investigation-2026-11-22-2345.html">2026-11-22（2345 安装程序验证版）</a></p>
     </header>
 
     <section id="findings" class="investigation-summary" aria-label="调查摘要">
       <p><strong>我们研究的 x64 样本中存在推广流程：它在用封装出来的系统部署的每台电脑上，把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件。</strong>在虚拟机运行验证中，代码预测的隐藏目录、下载脚本、开机启动项和 Edge 启动页修改全部实际出现；在中国大陆 IP 下，Edge 的推广地址最终打开的是 2345 网址导航，服务器下发的第一个文件是 2345 加速浏览器的安装程序。</p>
       <ul class="audit-steps">
-        <li><strong>默认开启，界面上没有单独开关：</strong>推广标志默认开启，随封装配置保存，部署时读取。只有 VIP 认证能关闭这个标志；关闭整个“部署控制”也能让推广不运行，但会失去全部部署功能。</li>
-        <li><strong>受影响的是部署出去的电脑：</strong>推广所在的部署程序在第二阶段写入目标系统，是否推广在封装那一刻就已决定；使用这些电脑的人从没见过该软件的界面和协议。</li>
+        <li><strong>默认开启，界面上没有单独开关：</strong>推广标志默认开启，随封装配置保存，部署时读取。只有 VIP 认证能关闭这个标志，第二阶段的“部署控制”开关关不掉推广。</li>
+        <li><strong>受影响的是部署出去的电脑：</strong>推广所在的部署程序在封装时写入目标系统，是否推广在封装那一刻就已决定；使用这些电脑的人从没见过该软件的界面和协议。</li>
         <li><strong>下载不做校验：</strong>文件名由服务器决定，下载成功即运行，没有哈希或签名检查。</li>
         <li><strong>主页和下载都指向 2345：</strong>在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址里的参数与代码中的默认地址完全相同；第一个下载项被服务器转到 2345 的下载服务器，下发 2345 加速浏览器 v14.1 的安装程序，文件名带 <code>silence</code>。</li>
         <li><strong>协议没有提到：</strong>程序内的许可协议没有提到修改主页、下载或安装软件、推广。</li>
@@ -101,7 +101,7 @@ VIP 成功分支：OGEOPWVWSRRVXDF(0)</code></pre>
       <div class="finding-heading"><span class="evidence-tag">静态代码已确认</span><h3>推广标志只有一个关闭点</h3></div>
       <p>标志函数在全文一共有四处引用：第 6745 行的 <code>OGEOPWVWSRRVXDF(0)</code>，只在 VIP 已认证时执行；第 7016、16416 行把当前值存入 <code>SSP</code>；第 18166 行是混淆器生成的函数登记表，同一段里每个函数都这样登记，不是调用。<code>SSP</code> 字段在全文只有这两处写入和部署时的一处读取（第 26401 行）。界面上没有对应的复选框，封装配置里没有对应的设置项，也没有命令行参数会改变它。运行验证中逐页查看了两个阶段的全部设置页，同样没有任何关于主页、推荐软件或推广的选项。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-evidence/05-flag-references.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/05-flag-references.png" width="1440" height="932" loading="lazy" alt="带行号的代码摘录：推广标志的全部四处引用，唯一的关闭点位于 VIP 已认证分支，另有两处写入、一处函数登记表和部署时的一处读取"></a><figcaption>图 3 · 推广标志的全部引用。点击查看原尺寸。</figcaption></figure>
-      <p>因此<strong>推广标志本身</strong>只能由 VIP 认证关闭。另有一个更粗的办法：第二阶段“部署”页的“部署控制”开关（默认开启）关闭后，部署控制程序不会被导入，部署入口也不会登记（第 23705–23717 行），推广所在的部署流程按代码也就不会运行。但计算机名、驱动、部署背景、部署插件等全部部署功能也随之失去，所以它不是专门的取消推广选项；关闭后部署能否正常完成，没有验证。</p>
+      <p>因此推广只能由 VIP 认证关闭。第二阶段“部署”页的“部署控制”开关（默认开启）也关不掉它：这个开关只决定第二阶段是否把部署控制程序登记为系统部署入口（第 23705–23717 行）。而在第一阶段，程序已经把自身复制到目标系统（第 23612、24634–24639 行），并在应答文件里写入带 <code>/InDeploy</code> 参数的同步运行项（第 9171–9174、30465 行）。推广所在的“部署中”阶段由这个运行项启动，与“部署控制”开关无关。</p>
       <div class="finding-heading"><span class="evidence-tag supplement">推断</span><h3>推广与否在封装那一刻决定</h3></div>
       <p>部署时读取的是封装时保存的配置（第 20836–20841 行），部署阶段不再检查 VIP 状态，所以是否推广由封装者在封装那一刻的 VIP 状态决定，并固化在镜像里。VIP 是限时的，到期提示写着到期后“将无法使用 VIP 权限”（第 19236–19246 行）。由此推断：VIP 到期后再封装的镜像会重新带上推广，到期前封装的镜像不受影响。这一点没有经过验证。</p>
       <p class="scope-note">仅凭本次分析，不能确保购买 VIP 后系统的纯净性；普通与 VIP 状态的对照没有做。</p>
@@ -109,8 +109,8 @@ VIP 成功分支：OGEOPWVWSRRVXDF(0)</code></pre>
 
     <section id="deployment" class="investigation-section">
       <h2>04 · 推广在何时、在哪台电脑上运行</h2>
-      <div class="finding-heading"><span class="evidence-tag">静态代码与运行均确认</span><h3>部署程序在第二阶段写入，推广在部署阶段运行</h3></div>
-      <p>该软件在正常 Windows 中封装时，确认框会提示“请务必在封装完成重启后立刻进入 PE 执行第二阶段”。第二阶段在 PE 中挂载目标系统的注册表，导入部署控制程序并登记部署入口（第 2206–2226 行，第 27738 行起；出错提示为“部署控制程序导入失败”）。跳过第二阶段直接开机，部署控制程序不会被导入，推广也不会出现。运行验证中，第二阶段的“部署控制”默认开启，部署时屏幕上显示的正是该部署程序的界面。</p>
+      <div class="finding-heading"><span class="evidence-tag">静态代码与运行均确认</span><h3>部署程序在封装时写入，推广在部署阶段运行</h3></div>
+      <p>该软件在正常 Windows 中封装（第一阶段）时，会把程序自身复制到目标系统，并在应答文件里写入部署时运行它的同步运行项（第 9171–9174、23600–23615、30465 行）；确认框随后提示“请务必在封装完成重启后立刻进入 PE 执行第二阶段”。第二阶段在 PE 中挂载目标系统的注册表，导入部署控制程序并登记为部署入口（第 2206–2226 行，第 27738 行起；出错提示为“部署控制程序导入失败”）。推广所在的“部署中”阶段由第一阶段写入的运行项启动。运行验证中，第二阶段的“部署控制”默认开启，部署时屏幕上显示的正是该部署程序的界面。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R1-deploy-page.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R1-deploy-page.png" width="1083" height="686" loading="lazy" alt="虚拟机截图：第二阶段的“部署”页，部署控制开关默认开启，计算机名前缀和部署插件名称已遮挡"></a><figcaption>图 4 · 运行截图：第二阶段“部署”页，“部署控制”默认开启。点击查看原尺寸。</figcaption></figure>
       <p>部署程序把“部署中”阶段无条件写入运行列表（第 9171–9174 行）。到了这个阶段，部署函数 <code>GSOWTITXQQRLSFI</code> 调用推广检查函数 <code>XPAWHQZSWVFQKEN</code>：后者检查配置中的 <code>Other → SSP</code> 或 <code>Sysprep → SSP</code>，任一为真才继续，随后传入版本标识，进入主页修改和下载安排。</p>
       <ol class="flow-list"><li>读取封装配置中的 SSP</li><li>拼接推广地址与版本标识</li><li>修改主页，安排下载</li></ol>
@@ -234,7 +234,7 @@ $HWHOAL["session"]["startup_urls"] = …
         <tr><td>VIP 免广告</td><td>菜单、认证提示、成功后关闭推广标志</td><td>代码层面支持</td></tr>
         <tr><td>一定是 2345 或 360 软件</td><td>主页：中国大陆 IP 下跳转到 2345 网址导航，参数与代码中的默认地址一致；下载：第一个下载项是 2345 加速浏览器安装程序，另外两项返回 403</td><td>本次运行中都是 2345；不能外推到其他时间、网络和版本</td></tr>
         <tr><td>所有 2026 年软件都这样</td><td>只研究了一个版本，深入分析仅限 x64</td><td>不能外推</td></tr>
-        <tr><td>无法取消，必须 VIP 才能纯净</td><td>推广标志只有 VIP 认证能关闭，界面没有单独开关；关闭整个“部署控制”也能避免，但失去全部部署功能</td><td>基本支持，但不是绝对</td></tr>
+        <tr><td>无法取消，必须 VIP 才能纯净</td><td>推广标志只有 VIP 认证能关闭，界面没有单独开关；关闭“部署控制”也关不掉</td><td>代码层面支持</td></tr>
         <tr><td>打开软件就立即改主页</td><td>修改发生在部署阶段，作用于部署出去的电脑</td><td>不支持“仅打开即触发”</td></tr>
       </tbody></table></div>
       <a class="text-link" href="https://www.52pojie.cn/thread-2100899-1-1.html" target="_blank" rel="noopener noreferrer">查看本次研究参考的帖子 ↗</a>
@@ -246,14 +246,14 @@ $HWHOAL["session"]["startup_urls"] = …
         <li><strong>完整的安装过程：</strong>安装程序只下载了 42%，没有运行。安装过程本次没有观察到。刚部署的电脑缺少根证书时下载会失败，这一点在不同的 Windows 版本和镜像中是否一样，也没有验证。</li>
         <li><strong>普通与 VIP 对照：</strong>需要合法有效的两种状态在相同环境、相同配置下对比，而不是修改认证程序或绕过验证。</li>
         <li><strong>程序外的告知：</strong>官网、下载页等渠道是否说明了这些行为。</li>
-        <li><strong>更多环境：</strong>其他 Windows 版本，以及关闭“部署控制”后部署能否正常完成。</li>
+        <li><strong>更多环境：</strong>其他 Windows 版本。</li>
         <li><strong>x86 样本：</strong>其脚本中有一个与推广标志函数结构完全相同的函数，全文仅此一个，提示机制相同；但调用经过加密表间接跳转，尚未解码，调用链仍未确认。</li>
       </ul>
     </section>
 
     <section id="wording" class="investigation-section">
       <h2>10 · 研究结论</h2>
-      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了四次运行验证。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现，联网时也确实向推广服务器发出了下载请求。在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址与代码中的默认地址相同；服务器下发的第一个文件是 2345 加速浏览器的安装程序，下载完成后会被批处理自动启动。推广标志默认开启，只有 VIP 认证能关闭（关闭整个“部署控制”也能避免，但会失去全部部署功能）；程序内的许可协议没有提到这些行为。本次运行中安装程序只下载了 42% 就中断，没有运行；刚部署的电脑缺少根证书时，下载器无法验证服务器证书，下载同样会失败；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
+      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了四次运行验证。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现，联网时也确实向推广服务器发出了下载请求。在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址与代码中的默认地址相同；服务器下发的第一个文件是 2345 加速浏览器的安装程序，下载完成后会被批处理自动启动。推广标志默认开启，只有 VIP 认证能关闭，关闭“部署控制”也关不掉；程序内的许可协议没有提到这些行为。本次运行中安装程序只下载了 42% 就中断，没有运行；刚部署的电脑缺少根证书时，下载器无法验证服务器证书，下载同样会失败；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
     </section>
 
     <section class="investigation-section investigation-notes">
