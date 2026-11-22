@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="某封装软件调查：样本哈希、VIP 免广告标志、Edge 启动页修改、下载执行流程、许可协议告知，以及三次虚拟机运行验证（断网、境外 IP、中国大陆 IP）的结果与证据边界。">
+  <meta name="description" content="某封装软件调查：样本哈希、VIP 免广告标志、Edge 启动页修改、下载执行流程、许可协议告知，以及四次虚拟机运行验证的结果与证据边界：在中国大陆 IP 下，服务器下发的是 2345 加速浏览器的安装程序。">
   <title>某封装软件 调查 · JY Sysprep</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css?v=11">
@@ -17,22 +17,22 @@
   <main id="main" class="wrap investigation-main">
     <header class="investigation-heading">
       <h1>某封装软件 调查</h1>
-      <p class="investigation-lead">从样本代码和三次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
-      <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成三次运行验证（断网、境外 IP、中国大陆 IP）；服务器实际下发的文件未取得</p>
-      <p class="investigation-meta">研究整理：Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a></p>
+      <p class="investigation-lead">从样本代码和四次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
+      <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成四次运行验证；已确认服务器下发 2345 加速浏览器安装程序，本次下载中断，安装程序未运行</p>
+      <p class="investigation-meta">研究整理：Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a>、<a href="./history/investigation-2026-11-22-cn.html">2026-11-22（中国大陆 IP 验证版）</a></p>
     </header>
 
     <section id="findings" class="investigation-summary" aria-label="调查摘要">
-      <p><strong>我们研究的 x64 样本中存在推广流程：它在用封装出来的系统部署的每台电脑上，把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件。</strong>在虚拟机运行验证中，代码预测的隐藏目录、下载脚本、开机启动项和 Edge 启动页修改全部实际出现；联网时，首次登录确实向推广服务器请求了三个下载项；在中国大陆 IP 下，Edge 的推广地址最终打开的是 2345 网址导航。</p>
+      <p><strong>我们研究的 x64 样本中存在推广流程：它在用封装出来的系统部署的每台电脑上，把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件。</strong>在虚拟机运行验证中，代码预测的隐藏目录、下载脚本、开机启动项和 Edge 启动页修改全部实际出现；在中国大陆 IP 下，Edge 的推广地址最终打开的是 2345 网址导航，服务器下发的第一个文件是 2345 加速浏览器的安装程序。</p>
       <ul class="audit-steps">
         <li><strong>默认开启，界面上没有单独开关：</strong>推广标志默认开启，随封装配置保存，部署时读取。只有 VIP 认证能关闭这个标志；关闭整个“部署控制”也能让推广不运行，但会失去全部部署功能。</li>
         <li><strong>受影响的是部署出去的电脑：</strong>推广所在的部署程序在第二阶段写入目标系统，是否推广在封装那一刻就已决定；使用这些电脑的人从没见过该软件的界面和协议。</li>
         <li><strong>下载不做校验：</strong>文件名由服务器决定，下载成功即运行，没有哈希或签名检查。</li>
-        <li><strong>主页指向 2345 网址导航：</strong>在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址里的参数与代码中的默认地址完全相同。</li>
+        <li><strong>主页和下载都指向 2345：</strong>在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址里的参数与代码中的默认地址完全相同；第一个下载项被服务器转到 2345 的下载服务器，下发 2345 加速浏览器 v14.1 的安装程序，文件名带 <code>silence</code>。</li>
         <li><strong>协议没有提到：</strong>程序内的许可协议没有提到修改主页、下载或安装软件、推广。</li>
       </ul>
-      <p>三次运行都没有下载到文件：在中国大陆 IP 下，三个下载请求连上了推广服务器，但随附的下载器无法验证服务器证书；在境外 IP 下，下载在解析域名时就失败了，推广页也被服务器拦截。因此服务器实际会下发哪些文件、安装哪些软件，仍不清楚。</p>
-      <p class="scope-note">本页结论只针对下面列出的样本、静态代码和三次运行，不等于对所有历史版本、当前在线服务或所有运行环境的判断，也不是“杀毒实测报告”。</p>
+      <p><strong>下载完成后，这个安装程序会被自动启动。</strong>批处理在下载成功后直接用 <code>start /B</code> 运行服务器下发的文件，不做任何校验，代码和运行中的批处理内容都证实了这一点。第四次运行中，安装程序（完整大小 128 MB）下载到 42% 时传输中断，下载器重试后放弃，所以安装程序没有运行，电脑上也没有装上任何东西；第二、三个下载项服务器返回 403。前三次运行没有下载到文件：境外 IP 下在解析域名时失败；中国大陆 IP 下，刚部署的电脑缺少根证书，下载器无法验证服务器证书。</p>
+      <p class="scope-note">本页结论只针对下面列出的样本、静态代码和四次运行，不等于对所有历史版本、当前在线服务或所有运行环境的判断，也不是“杀毒实测报告”。</p>
     </section>
 
     <nav class="investigation-toc" aria-label="调查目录"><a href="#samples">01 · 这次检查了什么</a><a href="#method">02 · 怎样分析，怎样保留证据</a><a href="#vip">03 · VIP 与推广标志</a><a href="#deployment">04 · 推广在何时、在哪台电脑上运行</a><a href="#homepage">05 · Edge 启动页被改为推广地址</a><a href="#download-chain">06 · 下载、运行与清理</a><a href="#disclosure">07 · 许可协议与告知</a><a href="#comparison">08 · 参考帖说法，哪些对得上</a><a href="#limits">09 · 还缺什么证据</a><a href="#wording">10 · 研究结论</a></nav>
@@ -66,7 +66,7 @@
         <li><strong>核对数据完整性。</strong>x64 主字符串表的三个解码块均通过脚本内置 SHA1 的一致性检查；恢复出 7,163 个字符串／数值项，以及 1,743 个函数表项。函数与数值替换后的文本保留原提取脚本的行号。</li>
         <li><strong>追到实际分支。</strong>从菜单、配置保存和部署入口向下追踪，并穷举关键函数和字段的全部引用，而非仅凭“VIP”或“2345”字符串下结论。</li>
       </ol>
-      <p><strong>运行验证</strong>于 2026-11-21 至 11-22 在用户的 VMware 虚拟机中进行，由用户操作，共三次：第一次全程断网；第二、三次从同一快照重做，只在首次登录前接入网络，分别使用境外 IP 和中国大陆 IP。只读收集脚本记录了封装前、部署后首次登录前、首次登录后几个时间点的状态，不运行它找到的任何程序。</p>
+      <p><strong>运行验证</strong>于 2026-11-21 至 11-22 在用户的 VMware 虚拟机中进行，由用户操作，共四次：第一次全程断网；后三次从同一快照重做，只在首次登录前接入网络，第二次使用境外 IP，第三、四次使用中国大陆 IP。只读收集脚本记录了封装前、部署后首次登录前、首次登录后几个时间点的状态，不运行它找到的任何程序。</p>
       <div class="table-scroll"><table><thead><tr><th>项目</th><th>运行验证的条件</th></tr></thead><tbody>
         <tr><td>系统</td><td>Windows 内部版本 26300.9457，中文，单系统，系统盘 C:，审核模式</td></tr>
         <tr><td>样本</td><td>x64 样本，在虚拟机内核对 SHA256 与上表一致</td></tr>
@@ -75,10 +75,11 @@
         <tr><td>网络（第一次）</td><td>第二阶段完成后断开网卡，部署、开箱和首次登录全程断网</td></tr>
         <tr><td>网络（第二次）</td><td>部署和开箱断网；开箱最后一步接入网络后再登录，之后联网观察 10 分钟。使用境外 IP</td></tr>
         <tr><td>网络（第三次）</td><td>与第二次相同，使用中国大陆 IP（登录后确认出口位于广东），联网观察约 20 分钟</td></tr>
-        <tr><td>第二、三次的额外处理</td><td>暂停 Windows 更新相关服务（测试期间被系统自行恢复）；用系统自带的 pktmon 抓包（第三次只在网卡一层记录，完整覆盖了下载时刻）；给隐藏的下载目录加上“禁止删除”权限，以便保留可能下载下来的文件。这一处理让批处理最后的自删除失败，但不影响下载和运行</td></tr>
+        <tr><td>网络（第四次）</td><td>与第三次相同；另外在开箱时、登录之前先联网，用系统自带的 <code>curl</code> 访问一次推广域名，让 Windows 自动装上验证服务器证书所需的根证书，再断网完成开箱。这让环境不再是“刚部署的电脑”</td></tr>
+        <tr><td>联网运行的额外处理</td><td>暂停 Windows 更新相关服务（测试期间被系统自行恢复）；用系统自带的 pktmon 抓包（第三、四次只在网卡一层记录，完整覆盖了下载时刻）；给隐藏的下载目录加上“禁止删除”权限，以便保留可能下载下来的文件。这一处理让批处理最后的自删除失败，但不影响下载和运行</td></tr>
         <tr><td>与默认流程的差别</td><td>该版本 Windows 断网开箱时没有本地账户选项，用系统自带的 <code>start ms-cxh:localonly</code> 建了本地账户；与推广流程无关</td></tr>
       </tbody></table></div>
-      <p class="scope-note">静态分析时没有运行目标程序、提取出的脚本或生成的批处理，没有请求推广服务器。第一次运行全程断网；第二、三次运行中，推广流程按代码向服务器发出了请求，但都没有下载到任何文件。原件未修改，没有改变任何 VIP 状态。</p>
+      <p class="scope-note">静态分析时没有运行目标程序、提取出的脚本或生成的批处理，没有请求推广服务器。第一次运行全程断网；后三次运行中，推广流程都按代码向服务器发出了请求；第四次下载到了不完整的安装程序，它没有被运行，也没有被拷出分析或执行。原件未修改，没有改变任何 VIP 状态。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R9-exit-check.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R9-exit-check.png" width="877" height="611" loading="lazy" alt="虚拟机截图：登录后在命令行查询推广域名，并确认网络出口位于中国广东；推广域名和出口 IP 已遮挡"></a><figcaption>图 1 · 运行截图（第三次）：登录后确认网络出口位于中国大陆。推广域名和出口 IP 已遮挡。点击查看原尺寸。</figcaption></figure>
 
     </section>
@@ -138,7 +139,7 @@ $HWHOAL["session"]["startup_urls"] = …
       <p>第二次运行中，部署写入的 <code>initial_preferences</code> 与第一次完全相同（SHA256 一致）。联网状态下打开 Edge，除了微软的“有哪些新功能”页面，还自动打开了推广地址。页面能连上服务器，但显示的是服务器前端 Web 应用防火墙的“访问已被拦截”。测试者在实体机上用同一网络访问该软件的官方网站，也看到同样的拦截页。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R6-edge-online.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R6-edge-online.png" width="1440" height="896" loading="lazy" alt="虚拟机截图：联网时 Edge 自动打开推广地址，页面为 Web 应用防火墙的访问已被拦截提示，地址已遮挡"></a><figcaption>图 9 · 运行截图（境外 IP）：Edge 自动打开推广地址，被服务器的防火墙拦截。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 中国大陆 IP</span><h3>中国大陆 IP 下：推广地址跳转到 2345 网址导航</h3></div>
-      <p>第三次运行中，Edge 启动时同样自动打开了推广地址。这一次页面没有被拦截，而是跳转到了 2345 网址导航，地址为 <code>https://www.2345.com/?751</code>。代码第 11061 行的默认地址正是这一个，连参数 <code>751</code> 也相同。也就是说，代码里写入 Edge 的是该软件自己的推广地址，实际打开的页面由服务器转到 2345 网址导航。服务器今后是否会改变跳转目标，本次无法判断。</p>
+      <p>第三次运行中，Edge 启动时同样自动打开了推广地址。这一次页面没有被拦截，而是跳转到了 2345 网址导航，地址为 <code>https://www.2345.com/?751</code>。代码第 11061 行的默认地址正是这一个，连参数 <code>751</code> 也相同。也就是说，代码里写入 Edge 的是该软件自己的推广地址，实际打开的页面由服务器转到 2345 网址导航。第四次运行中，推广域名的根路径同样直接跳转到这个地址。服务器今后是否会改变跳转目标，本次无法判断。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R10-edge-2345.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R10-edge-2345.png" width="1440" height="155" loading="lazy" alt="虚拟机截图：Edge 的第二个标签页显示 2345 网址导航，地址栏为 https://www.2345.com/?751"></a><figcaption>图 10 · 运行截图（中国大陆 IP）：推广地址跳转到 2345 网址导航。只截取页面顶部。点击查看原尺寸。</figcaption></figure>
     </section>
 
@@ -190,9 +191,29 @@ $HWHOAL["session"]["startup_urls"] = …
       <ul class="audit-steps">
         <li><strong>为什么验证失败：</strong>随附的 wget 用 OpenSSL 编译，默认证书文件指向编译时的路径，部署出去的电脑上并不存在；它同时会读取 Windows 本机证书库里的根证书。刚部署的 Windows 本机只预置了少量根证书，其余在用到时才由系统下载，而 wget 直接读取本机证书库，不会触发这种下载。最可能的原因是这台刚部署的电脑上还没有这条证书链的根证书。这是推断，没有验证；本机证书库里已有对应根证书的电脑上，下载可能成功。</li>
         <li><strong>没有装上东西：</strong>观察约 20 分钟，屏幕上只出现了部署通知。已安装的 28 个应用都来自 Microsoft，进程、服务、计划任务和启动项中都没有 Microsoft 以外的程序。</li>
-        <li><strong>下载只尝试一次：</strong>三次运行中，批处理都只在首次登录时运行一次，失败后不重试，之后也不会补下载。</li>
+        <li><strong>只在首次登录时下载：</strong>批处理只在首次登录时运行一次，失败后不会再补下载。</li>
       </ul>
-      <p class="scope-note">三次运行都没有取得服务器下发的文件，服务器实际会下发什么、装上什么，仍未验证。隐藏窗口、隐藏目录和结束后清理是观察到的具体行为；“隐瞒用户”“未经同意”“恶意软件”是更进一步的判断，需要更多证据支撑。</p>
+      <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 中国大陆 IP，已装根证书</span><h3>第四次：服务器下发 2345 加速浏览器安装程序，下载中断后没有运行</h3></div>
+      <p>第四次运行在登录之前先让系统装上了根证书。开箱时用系统自带的 <code>curl</code> 访问一次推广域名后，Windows 自动新装了 4 张根证书（DigiCert Global Root G2、G3，USERTrust RSA，Certum Trusted Network CA），之后用下载目录里的 wget 测试，证书验证通过。</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R12-new-roots.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R12-new-roots.png" width="1440" height="414" loading="lazy" alt="虚拟机截图：开箱时访问推广域名后，系统新装的 4 张根证书"></a><figcaption>图 19 · 运行截图（第四次）：登录前系统新装的根证书。点击查看原尺寸。</figcaption></figure>
+      <p>首次登录时，批处理请求第一个下载项，推广服务器返回 302，把下载转到 2345 的下载服务器：<code>union.2345cdn.net/union6100_common/2345explorer_227977751_Y_silence.exe</code>。服务器给出的文件大小为 134,229,288 字节（128 MB）。下载中两次传输中断，wget 两次断点续传，第三次中断后在 56,441,199 字节（42%）处放弃。第二、三个下载项服务器都返回 403。</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R13-download-2345.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R13-download-2345.png" width="1098" height="677" loading="lazy" alt="虚拟机截图：第一个下载项被 302 转到 2345 的下载服务器，开始下载 2345explorer 安装程序，推广域名已遮挡"></a><figcaption>图 20 · 运行截图（第四次）：第一个下载项被转到 2345 的下载服务器。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R14-softinst-2345.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R14-softinst-2345.png" width="962" height="712" loading="lazy" alt="虚拟机截图：下载目录中多了 56,441,199 字节的 2345explorer_227977751_Y_silence.exe 和三个日志"></a><figcaption>图 21 · 运行截图（第四次）：下载目录中不完整的 2345 安装程序。点击查看原尺寸。</figcaption></figure>
+      <div class="table-scroll"><table><thead><tr><th>项目</th><th>下载到的文件（不完整）</th></tr></thead><tbody>
+        <tr><td>文件名</td><td><code>2345explorer_227977751_Y_silence.exe</code>（由服务器决定）</td></tr>
+        <tr><td>版本信息</td><td>公司 2345移动科技；产品 2345加速浏览器；描述“2345加速浏览器 v14.1 安装程序”；版本 14.1.0.43641</td></tr>
+        <tr><td>格式</td><td>NSIS 安装程序</td></tr>
+        <tr><td>大小</td><td>56,441,199 / 134,229,288 字节（42%）</td></tr>
+        <tr><td>SHA256（不完整文件）</td><td><code>ADADCC83A67B8AEA2DE13D0921A6F76543A16EB5EAA4D11EE1BE03D87BE4DA3A</code></td></tr>
+        <tr><td>签名</td><td>文件被截断，签名位于文件末尾，无法判断完整文件是否签名</td></tr>
+      </tbody></table></div>
+      <ul class="audit-steps">
+        <li><strong>下载完成就会被启动：</strong>批处理在 wget 成功退出后，用 <code>start /B</code> 运行服务器给出的文件名，不检查哈希或签名。本次 wget 失败退出，所以安装程序没有运行。如果下载完成，这个 2345 加速浏览器安装程序会在首次登录时被自动启动。</li>
+        <li><strong>文件名标明静默：</strong>服务器下发的文件名是 <code>2345explorer_227977751_Y_silence.exe</code>，其中 <code>silence</code> 即“静默”。</li>
+        <li><strong>没有装上东西：</strong>观察约 20 分钟，屏幕上只出现了部署通知。已安装的 30 个应用都来自 Microsoft，进程、服务、计划任务和启动项中没有 2345 或其他第三方程序，Windows 安全中心没有拦截记录。</li>
+        <li><strong>中断原因不明：</strong>日志只记录了“读取错误”，抓包里可以看到与 2345 下载服务器的三次连接、共约 59 MB 数据，但无法判断中断来自网络链路还是服务器。</li>
+      </ul>
+      <p class="scope-note">只取得了不完整的安装程序，本次没有观察到安装过程；第二、三个下载项返回 403，它们在其他时间、其他网络下是否会下发文件，也不清楚。隐藏窗口、隐藏目录和结束后清理是观察到的具体行为；“隐瞒用户”“未经同意”“恶意软件”是更进一步的判断，需要更多证据支撑。</p>
     </section>
 
     <section id="disclosure" class="investigation-section">
@@ -200,7 +221,7 @@ $HWHOAL["session"]["startup_urls"] = …
       <div class="finding-heading"><span class="evidence-tag">静态代码与运行均确认</span><h3>程序内的许可协议没有提到这些行为</h3></div>
       <p>许可协议文本由第 17224–17245 行的函数生成，界面配有“同意／不同意”按钮（第 15588–15589 行）。如果在菜单里取消勾选“许可协议”，点击封装时会提示未接受协议并终止（第 25250–25254 行）。运行时显示的协议与代码一致。</p>
       <p>协议共 8 条，内容是：封装前和部署前备份、不对系统故障负责、不保证所有硬件可用、必须完整分发、允许复制分发、可能被安全软件拦截，以及禁止破解和反编译。其中<strong>没有提到</strong>修改主页、下载或安装软件、推广或广告。按“推广、广告、推荐、赞助、捆绑、主页、首页”等关键词搜索全部界面字符串，与推广有关的只有菜单项“VIP 免广告”和 VIP 认证对话框里的“可开启更多功能或免广告”。</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/08-license.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/08-license.png" width="1440" height="1052" loading="lazy" alt="带行号的代码摘录：程序内许可协议的 8 条正文，以及未接受协议时终止封装的分支"></a><figcaption>图 19 · 程序内的许可协议。协议正文中没有提到主页、下载、安装或推广。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/08-license.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/08-license.png" width="1440" height="1052" loading="lazy" alt="带行号的代码摘录：程序内许可协议的 8 条正文，以及未接受协议时终止封装的分支"></a><figcaption>图 22 · 程序内的许可协议。协议正文中没有提到主页、下载、安装或推广。点击查看原尺寸。</figcaption></figure>
       <p class="scope-note">这只能说明程序内没有相关告知。官网、下载页或其他渠道是否另有说明，不在本次分析范围内。</p>
     </section>
 
@@ -209,9 +230,9 @@ $HWHOAL["session"]["startup_urls"] = …
       <p>我们参考的一则论坛回答提到：标准版会修改主页、联网后下载安装软件，VIP 可以免广告。我们把这些说法当作<strong>待核对线索</strong>，与样本代码和运行结果逐项比对，未独立核对完整帖文。</p>
       <div class="table-scroll"><table><thead><tr><th>线索</th><th>本样本中的对应证据</th><th>判断</th></tr></thead><tbody>
         <tr><td>修改浏览器主页</td><td>部署分支写入 Edge 初始偏好设置；运行中 Edge 第二次启动即打开推广地址，中国大陆 IP 下该地址跳转到 2345 网址导航</td><td>代码与运行均支持</td></tr>
-        <tr><td>后续下载安装文件</td><td>下载器、三个下载项、首次登录时运行；运行中确认了安排、运行与清理，联网时确实发出了下载请求</td><td>支持；境外 IP 下解析失败，中国大陆 IP 下证书验证失败，实际下发内容未验证</td></tr>
+        <tr><td>后续下载安装文件</td><td>下载器、三个下载项、首次登录时运行；运行中确认了安排、运行与清理，联网时确实发出了下载请求</td><td>支持：中国大陆 IP 下服务器下发 2345 加速浏览器安装程序，下载完成后会被自动启动；本次下载中断，安装程序未运行</td></tr>
         <tr><td>VIP 免广告</td><td>菜单、认证提示、成功后关闭推广标志</td><td>代码层面支持</td></tr>
-        <tr><td>一定是 2345 或 360 软件</td><td>主页：中国大陆 IP 下，推广地址跳转到 2345 网址导航，参数与代码中的默认地址一致；安装的软件：三次运行都没有取得下发文件</td><td>主页指向 2345 网址导航得到运行支持；安装什么软件仍不能确认</td></tr>
+        <tr><td>一定是 2345 或 360 软件</td><td>主页：中国大陆 IP 下跳转到 2345 网址导航，参数与代码中的默认地址一致；下载：第一个下载项是 2345 加速浏览器安装程序，另外两项返回 403</td><td>本次运行中都是 2345；不能外推到其他时间、网络和版本</td></tr>
         <tr><td>所有 2026 年软件都这样</td><td>只研究了一个版本，深入分析仅限 x64</td><td>不能外推</td></tr>
         <tr><td>无法取消，必须 VIP 才能纯净</td><td>推广标志只有 VIP 认证能关闭，界面没有单独开关；关闭整个“部署控制”也能避免，但失去全部部署功能</td><td>基本支持，但不是绝对</td></tr>
         <tr><td>打开软件就立即改主页</td><td>修改发生在部署阶段，作用于部署出去的电脑</td><td>不支持“仅打开即触发”</td></tr>
@@ -222,7 +243,7 @@ $HWHOAL["session"]["startup_urls"] = …
     <section id="limits" class="investigation-section">
       <h2>09 · 还缺什么证据</h2>
       <ul class="audit-steps">
-        <li><strong>服务器下发的文件：</strong>三次运行都没有取得。中国大陆 IP 下，下载器因无法验证服务器证书而失败。要取得下发内容，需要在本机已有对应根证书的环境中运行，这会偏离“刚部署的电脑”这一条件，需要单独说明。取得后还要记录文件的哈希与签名，以及装上了什么。</li>
+        <li><strong>完整的安装过程：</strong>安装程序只下载了 42%，没有运行。安装过程本次没有观察到。刚部署的电脑缺少根证书时下载会失败，这一点在不同的 Windows 版本和镜像中是否一样，也没有验证。</li>
         <li><strong>普通与 VIP 对照：</strong>需要合法有效的两种状态在相同环境、相同配置下对比，而不是修改认证程序或绕过验证。</li>
         <li><strong>程序外的告知：</strong>官网、下载页等渠道是否说明了这些行为。</li>
         <li><strong>更多环境：</strong>其他 Windows 版本，以及关闭“部署控制”后部署能否正常完成。</li>
@@ -232,14 +253,14 @@ $HWHOAL["session"]["startup_urls"] = …
 
     <section id="wording" class="investigation-section">
       <h2>10 · 研究结论</h2>
-      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了三次运行验证（断网、境外 IP、中国大陆 IP）。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现，联网时也确实向推广服务器发出了下载请求。在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址与代码中的默认地址相同。推广标志默认开启，只有 VIP 认证能关闭（关闭整个“部署控制”也能避免，但会失去全部部署功能）；程序内的许可协议没有提到这些行为。三次运行中下载都没有完成（境外 IP 下解析失败，中国大陆 IP 下证书验证失败），因此尚不清楚服务器实际会下载哪些文件、安装哪些软件；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
+      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了四次运行验证。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现，联网时也确实向推广服务器发出了下载请求。在中国大陆 IP 下，推广地址把 Edge 带到 2345 网址导航，地址与代码中的默认地址相同；服务器下发的第一个文件是 2345 加速浏览器的安装程序，下载完成后会被批处理自动启动。推广标志默认开启，只有 VIP 认证能关闭（关闭整个“部署控制”也能避免，但会失去全部部署功能）；程序内的许可协议没有提到这些行为。本次运行中安装程序只下载了 42% 就中断，没有运行；刚部署的电脑缺少根证书时，下载器无法验证服务器证书，下载同样会失败；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
     </section>
 
     <section class="investigation-section investigation-notes">
       <h2>证据保管与复核说明</h2>
       <p>本地分析目录中保存了样本登记、提取清单、脚本文本、索引表、字符串表、只读解码脚本、运行验证的收集结果与原始截图。网页仅展示必要的行为摘录，不附带目标 EXE、完整反编译文本或认证密钥材料。</p>
       <p>文中行号均指 x64 提取后、保留行号的 <code>resolved.au3.txt</code>，不是厂商源码行号。匿名函数名为样本自身的混淆名称；表格和流程描述是本次调查的解释。SHA1 一致性只用于检查解码数据，不是安全认证。</p>
-      <p>页面中的软件名称、版本号、样本文件名和推广域名均作匿名处理；2345 网址导航是运行中实际打开的第三方页面，直接写出。代码摘录图按还原文本的真实行号排版生成，关键行以背景色标记，不是运行实测画面。运行截图来自测试虚拟机，软件名称、部署程序路径、推广域名、版本标识和网络出口 IP 已用色块遮挡，2345 网址导航的截图只保留页面顶部，其余内容未作修改。第二、三次运行的截图中，时间先后出现两种时钟：联网前虚拟机时钟比实际慢 8 小时，联网后自动对时。</p>
+      <p>页面中的软件名称、版本号、样本文件名和推广域名均作匿名处理；2345 网址导航是运行中实际打开的第三方页面，直接写出。代码摘录图按还原文本的真实行号排版生成，关键行以背景色标记，不是运行实测画面。运行截图来自测试虚拟机，软件名称、部署程序路径、推广域名、版本标识和网络出口 IP 已用色块遮挡，2345 网址导航的截图只保留页面顶部，其余内容未作修改。第二、三次运行的截图中，时间先后出现两种时钟：联网前虚拟机时钟比实际慢 8 小时，联网后自动对时；第四次运行在开箱时已对时。下载到的不完整安装程序只读取了版本信息和哈希，没有运行。</p>
       <p>工具方法参考：<a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper 项目说明</a>。本次研究参考了论坛回答截图。</p>
     </section>
   </main>
