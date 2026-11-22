@@ -19,7 +19,7 @@
       <h1>某封装软件 调查</h1>
       <p class="investigation-lead">从样本代码和四次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
       <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成四次运行验证；已确认服务器下发 2345 加速浏览器安装程序，本次下载中断，安装程序未运行</p>
-      <p class="investigation-meta">研究整理：Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a>、<a href="./history/investigation-2026-11-22-cn.html">2026-11-22（中国大陆 IP 验证版）</a></p>
+      <p class="investigation-meta">研究整理：杰克姚、Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a>、<a href="./history/investigation-2026-11-22-online.html">2026-11-22（境外联网验证版）</a>、<a href="./history/investigation-2026-11-22-cn.html">2026-11-22（中国大陆 IP 验证版）</a></p>
     </header>
 
     <section id="findings" class="investigation-summary" aria-label="调查摘要">
@@ -66,7 +66,7 @@
         <li><strong>核对数据完整性。</strong>x64 主字符串表的三个解码块均通过脚本内置 SHA1 的一致性检查；恢复出 7,163 个字符串／数值项，以及 1,743 个函数表项。函数与数值替换后的文本保留原提取脚本的行号。</li>
         <li><strong>追到实际分支。</strong>从菜单、配置保存和部署入口向下追踪，并穷举关键函数和字段的全部引用，而非仅凭“VIP”或“2345”字符串下结论。</li>
       </ol>
-      <p><strong>运行验证</strong>于 2026-11-21 至 11-22 在用户的 VMware 虚拟机中进行，由用户操作，共四次：第一次全程断网；后三次从同一快照重做，只在首次登录前接入网络，第二次使用境外 IP，第三、四次使用中国大陆 IP。只读收集脚本记录了封装前、部署后首次登录前、首次登录后几个时间点的状态，不运行它找到的任何程序。</p>
+      <p><strong>运行验证</strong>于 2026-11-21 至 11-22 在杰克姚的 VMware 虚拟机中进行，由杰克姚操作，共四次：第一次全程断网；后三次从同一快照重做，只在首次登录前接入网络，第二次使用境外 IP，第三、四次使用中国大陆 IP。只读收集脚本记录了封装前、部署后首次登录前、首次登录后几个时间点的状态，不运行它找到的任何程序。</p>
       <div class="table-scroll"><table><thead><tr><th>项目</th><th>运行验证的条件</th></tr></thead><tbody>
         <tr><td>系统</td><td>Windows 内部版本 26300.9457，中文，单系统，系统盘 C:，审核模式</td></tr>
         <tr><td>样本</td><td>x64 样本，在虚拟机内核对 SHA256 与上表一致</td></tr>
@@ -136,7 +136,7 @@ $HWHOAL["session"]["startup_urls"] = …
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R3-edge-startup.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R3-edge-startup.png" width="1440" height="898" loading="lazy" alt="虚拟机截图：Edge 第二次启动时自动打开推广地址，地址已遮挡"></a><figcaption>图 7 · 运行截图：Edge 第二次启动时自动打开推广地址。点击查看原尺寸。</figcaption></figure>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R4-edge-settings.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R4-edge-settings.png" width="1440" height="899" loading="lazy" alt="虚拟机截图：Edge 设置中启动时打开自定义网站，网站列表中只有推广地址，地址已遮挡"></a><figcaption>图 8 · 运行截图：Edge 设置为启动时打开自定义网站。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 境外 IP</span><h3>境外 IP 下：推广页被服务器拦截</h3></div>
-      <p>第二次运行中，部署写入的 <code>initial_preferences</code> 与第一次完全相同（SHA256 一致）。联网状态下打开 Edge，除了微软的“有哪些新功能”页面，还自动打开了推广地址。页面能连上服务器，但显示的是服务器前端 Web 应用防火墙的“访问已被拦截”。测试者在实体机上用同一网络访问该软件的官方网站，也看到同样的拦截页。</p>
+      <p>第二次运行中，部署写入的 <code>initial_preferences</code> 与第一次完全相同（SHA256 一致）。联网状态下打开 Edge，除了微软的“有哪些新功能”页面，还自动打开了推广地址。页面能连上服务器，但显示的是服务器前端 Web 应用防火墙的“访问已被拦截”。杰克姚在实体机上用同一网络访问该软件的官方网站，也看到同样的拦截页。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R6-edge-online.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R6-edge-online.png" width="1440" height="896" loading="lazy" alt="虚拟机截图：联网时 Edge 自动打开推广地址，页面为 Web 应用防火墙的访问已被拦截提示，地址已遮挡"></a><figcaption>图 9 · 运行截图（境外 IP）：Edge 自动打开推广地址，被服务器的防火墙拦截。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 中国大陆 IP</span><h3>中国大陆 IP 下：推广地址跳转到 2345 网址导航</h3></div>
       <p>第三次运行中，Edge 启动时同样自动打开了推广地址。这一次页面没有被拦截，而是跳转到了 2345 网址导航，地址为 <code>https://www.2345.com/?751</code>。代码第 11061 行的默认地址正是这一个，连参数 <code>751</code> 也相同。也就是说，代码里写入 Edge 的是该软件自己的推广地址，实际打开的页面由服务器转到 2345 网址导航。第四次运行中，推广域名的根路径同样直接跳转到这个地址。服务器今后是否会改变跳转目标，本次无法判断。</p>
