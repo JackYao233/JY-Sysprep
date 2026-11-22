@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="某封装软件调查：样本哈希、VIP 免广告标志、Edge 启动页修改、下载执行流程、许可协议告知，以及一次断网运行验证的结果与证据边界。">
+  <meta name="description" content="某封装软件调查：样本哈希、VIP 免广告标志、Edge 启动页修改、下载执行流程、许可协议告知，以及断网、联网两次虚拟机运行验证的结果与证据边界。">
   <title>某封装软件 调查 · JY Sysprep</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css?v=11">
@@ -17,20 +17,20 @@
   <main id="main" class="wrap investigation-main">
     <header class="investigation-heading">
       <h1>某封装软件 调查</h1>
-      <p class="investigation-lead">从样本代码和一次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
-      <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成一次断网运行验证；联网运行未验证</p>
-      <p class="investigation-meta">研究整理：Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a></p>
+      <p class="investigation-lead">从样本代码和两次虚拟机运行出发，核对 VIP 免广告、浏览器主页修改与下载执行之间的关系。</p>
+      <p class="investigation-meta">调查日期：2026-10-22 · 最后修改：2026-11-22 · 状态：静态分析完成；完成断网、联网各一次运行验证；联网验证在中国大陆以外的网络进行，服务器实际下发的内容未取得</p>
+      <p class="investigation-meta">研究整理：Codex、Claude · 历史版本：<a href="./history/investigation-2026-10-22.html">2026-10-22</a>、<a href="./history/investigation-2026-11-21.html">2026-11-21</a>、<a href="./history/investigation-2026-11-22.html">2026-11-22（断网运行验证版）</a></p>
     </header>
 
     <section id="findings" class="investigation-summary" aria-label="调查摘要">
-      <p><strong>我们研究的 x64 样本中存在推广流程：它在用封装出来的系统部署的每台电脑上，把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件。</strong>一次断网的虚拟机运行验证中，代码预测的隐藏目录、下载脚本、开机启动项和 Edge 启动页修改全部实际出现。</p>
+      <p><strong>我们研究的 x64 样本中存在推广流程：它在用封装出来的系统部署的每台电脑上，把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件。</strong>在虚拟机运行验证中，代码预测的隐藏目录、下载脚本、开机启动项和 Edge 启动页修改全部实际出现；联网时，首次登录确实向推广服务器请求了三个下载项。</p>
       <ul class="audit-steps">
         <li><strong>默认开启，界面上没有单独开关：</strong>推广标志默认开启，随封装配置保存，部署时读取。只有 VIP 认证能关闭这个标志；关闭整个“部署控制”也能让推广不运行，但会失去全部部署功能。</li>
         <li><strong>受影响的是部署出去的电脑：</strong>推广所在的部署程序在第二阶段写入目标系统，是否推广在封装那一刻就已决定；使用这些电脑的人从没见过该软件的界面和协议。</li>
         <li><strong>下载不做校验：</strong>文件名由服务器决定，下载成功即运行，没有哈希或签名检查。</li>
         <li><strong>协议没有提到：</strong>程序内的许可协议没有提到修改主页、下载或安装软件、推广。</li>
       </ul>
-      <p>运行验证是断网进行的，没有访问推广服务器，因此仍不清楚联网时实际会下载哪些文件、安装哪些软件。</p>
+      <p>联网验证所用的网络在中国大陆以外：三个下载请求都在解析推广域名时失败，Edge 打开的推广页被服务器的防火墙拦截，没有下载或安装任何软件。因此仍不清楚服务器对中国大陆用户会下发哪些文件、安装哪些软件。</p>
       <p class="scope-note">本页结论只针对下面列出的样本、静态代码和一次运行，不等于对所有历史版本、当前在线服务或所有运行环境的判断，也不是“杀毒实测报告”。</p>
     </section>
 
@@ -65,16 +65,18 @@
         <li><strong>核对数据完整性。</strong>x64 主字符串表的三个解码块均通过脚本内置 SHA1 的一致性检查；恢复出 7,163 个字符串／数值项，以及 1,743 个函数表项。函数与数值替换后的文本保留原提取脚本的行号。</li>
         <li><strong>追到实际分支。</strong>从菜单、配置保存和部署入口向下追踪，并穷举关键函数和字段的全部引用，而非仅凭“VIP”或“2345”字符串下结论。</li>
       </ol>
-      <p><strong>运行验证</strong>于 2026-11-22 在用户的 VMware 虚拟机中进行，由用户操作。只读收集脚本记录了封装前、部署后首次登录前、首次登录后三个时间点的状态，不运行它找到的任何程序。</p>
+      <p><strong>运行验证</strong>于 2026-11-21 至 11-22 在用户的 VMware 虚拟机中进行，由用户操作，共两次：第一次全程断网；第二次从同一快照重做，只在首次登录前接入网络。只读收集脚本记录了封装前、部署后首次登录前、首次登录后几个时间点的状态，不运行它找到的任何程序。</p>
       <div class="table-scroll"><table><thead><tr><th>项目</th><th>运行验证的条件</th></tr></thead><tbody>
         <tr><td>系统</td><td>Windows 内部版本 26300.9457，中文，单系统，系统盘 C:，审核模式</td></tr>
         <tr><td>样本</td><td>x64 样本，在虚拟机内核对 SHA256 与上表一致</td></tr>
         <tr><td>封装设置</td><td>不登录 VIP；全部选项保持默认，只把完成动作改为“完成后关机”</td></tr>
         <tr><td>两个阶段</td><td>第一阶段在 Windows 中执行；第二阶段按软件提示在 WinPE 中执行</td></tr>
-        <tr><td>网络</td><td>第二阶段完成后断开网卡，部署、开箱和首次登录全程断网</td></tr>
+        <tr><td>网络（第一次）</td><td>第二阶段完成后断开网卡，部署、开箱和首次登录全程断网</td></tr>
+        <tr><td>网络（第二次）</td><td>部署和开箱断网；开箱最后一步接入网络后再登录，之后联网观察 10 分钟。网络出口在中国大陆以外</td></tr>
+        <tr><td>第二次的额外处理</td><td>暂停 Windows 更新相关服务（测试期间被系统自行恢复）；用系统自带的 pktmon 抓包；给隐藏的下载目录加上“禁止删除”权限，以便保留可能下载下来的文件。这一处理让批处理最后的自删除失败，但不影响下载和运行</td></tr>
         <tr><td>与默认流程的差别</td><td>该版本 Windows 断网开箱时没有本地账户选项，用系统自带的 <code>start ms-cxh:localonly</code> 建了本地账户；与推广流程无关</td></tr>
       </tbody></table></div>
-      <p class="scope-note">静态分析时没有运行目标程序、提取出的脚本或生成的批处理，没有请求推广服务器。虚拟机运行全程断网，没有下载任何推广文件。原件未修改，没有改变任何 VIP 状态。</p>
+      <p class="scope-note">静态分析时没有运行目标程序、提取出的脚本或生成的批处理，没有请求推广服务器。第一次运行全程断网；第二次运行中，推广流程按代码向服务器发出了请求，但没有下载到任何文件。原件未修改，没有改变任何 VIP 状态。</p>
     </section>
 
     <section id="vip" class="investigation-section">
@@ -128,6 +130,9 @@ $HWHOAL["session"]["startup_urls"] = …
       <p>运行中，<code>initial_preferences</code> 在封装前不存在，部署时新建，内容只有三项：<code>homepage</code>、<code>restore_on_startup: 4</code> 和 <code>startup_urls</code>，都指向推广地址。首次登录后第一次打开 Edge，显示的是微软自己的欢迎页；关闭后<strong>第二次打开，Edge 自动打开推广地址</strong>（因为断网而无法连接）。设置页显示“启动时：打开自定义网站”，列表中只有推广地址。代码写入的 <code>homepage</code> 没有体现在界面上，因为“首页”按钮没有被打开。用户可以在这一页自行改回。</p>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R3-edge-startup.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R3-edge-startup.png" width="1440" height="898" loading="lazy" alt="虚拟机截图：Edge 第二次启动时自动打开推广地址，地址已遮挡"></a><figcaption>图 6 · 运行截图：Edge 第二次启动时自动打开推广地址。点击查看原尺寸。</figcaption></figure>
       <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R4-edge-settings.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R4-edge-settings.png" width="1440" height="899" loading="lazy" alt="虚拟机截图：Edge 设置中启动时打开自定义网站，网站列表中只有推广地址，地址已遮挡"></a><figcaption>图 7 · 运行截图：Edge 设置为启动时打开自定义网站。点击查看原尺寸。</figcaption></figure>
+      <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 联网</span><h3>联网时，推广页被服务器拦截</h3></div>
+      <p>第二次运行中，部署写入的 <code>initial_preferences</code> 与第一次完全相同（SHA256 一致）。联网状态下打开 Edge，除了微软的“有哪些新功能”页面，还自动打开了推广地址。页面能连上服务器，但显示的是服务器前端 Web 应用防火墙的“访问已被拦截”。测试者在实体机上用同一网络访问该软件的官方网站，也看到同样的拦截页。推广页在中国大陆网络下会显示什么，本次没有看到。</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R6-edge-online.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R6-edge-online.png" width="1440" height="896" loading="lazy" alt="虚拟机截图：联网时 Edge 自动打开推广地址，页面为 Web 应用防火墙的访问已被拦截提示，地址已遮挡"></a><figcaption>图 8 · 运行截图（联网）：Edge 自动打开推广地址，被服务器的防火墙拦截。点击查看原尺寸。</figcaption></figure>
     </section>
 
     <section id="download-chain" class="investigation-section">
@@ -135,20 +140,20 @@ $HWHOAL["session"]["startup_urls"] = …
       <div class="finding-heading"><span class="evidence-tag">静态代码已确认</span><h3>隐藏目录、下载脚本与三个下载项</h3></div>
       <p>同一推广入口把下载地址设为 <code>[推广域名]/d/[版本标识]</code>，下载项为 <code>1 2 3</code>。安装准备函数在系统盘根目录建立 <code>SoftInst</code> 目录并设为隐藏，在其下创建“时间戳＋随机字符”的子目录，释放 <code>wget.exe</code>，生成下载脚本 <code>inst.cmd</code> 与用于隐藏启动的 <code>inst.vbs</code>。生成的批处理逐项请求下载地址，从日志里取出服务器给的文件名，用 <code>start /B</code> 启动，等前一项结束再运行下一项，最后删除自身所在目录。</p>
       <p class="evidence-location">对应位置：安装准备第 11899 行起；批处理第 31576–31635 行；下载配置第 31442–31456 行，部署时覆盖地址第 8192 行。</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/04-download-execute.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/04-download-execute.png" width="1440" height="978" loading="lazy" alt="带行号的代码摘录：生成 wget 下载命令，并在成功保存文件后通过 start /B 运行"></a><figcaption>图 8 · 下载命令、成功分支与文件启动。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/04-download-execute.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/04-download-execute.png" width="1440" height="978" loading="lazy" alt="带行号的代码摘录：生成 wget 下载命令，并在成功保存文件后通过 start /B 运行"></a><figcaption>图 9 · 下载命令、成功分支与文件启动。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag">静态代码已确认</span><h3>安排在部署后首次登录时运行</h3></div>
       <p>部署调用传入的标志为 <code>11（1 + 2 + 8）</code>，没有设置立即运行所需的 <code>4</code> 位，三个可能的分支最终都写入 RunOnce：目标系统离线时写离线 hive（1 位）；以 SYSTEM 身份运行且 <code>@HomeDrive</code> 为空时写 <code>HKLM\…\RunOnce</code>（2 位，部署阶段正属于这种情况）；普通运行时 8 位同样写 RunOnce。因此在正常部署路径上，下载和运行发生在<strong>部署完成后第一个用户首次登录时</strong>，RunOnce 值名为 <code>SoftInst</code>。</p>
       <p class="evidence-location">对应位置：第 11929–11957、28700–28703 行。</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/06-first-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/06-first-logon.png" width="1440" height="1216" loading="lazy" alt="带行号的代码摘录：部署阶段以 SYSTEM 身份运行的判断、标志 11 的分支，以及写入 RunOnce 值 SoftInst"></a><figcaption>图 9 · 部署阶段的安装安排。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/06-first-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/06-first-logon.png" width="1440" height="1216" loading="lazy" alt="带行号的代码摘录：部署阶段以 SYSTEM 身份运行的判断、标志 11 的分支，以及写入 RunOnce 值 SoftInst"></a><figcaption>图 10 · 部署阶段的安装安排。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag">静态代码已确认</span><h3>下载的文件不做校验，也没有前置条件</h3></div>
       <ul class="audit-steps">
         <li><strong>不校验：</strong>批处理用 <code>--trust-server-names</code> 让服务器决定文件名，下载成功即运行，全程没有哈希或签名检查。服务器下发什么，部署出去的电脑就运行什么。不论意图如何，这本身就是安全风险：服务器或域名一旦出问题，所有部署出去的电脑都会受影响。</li>
         <li><strong>没有前置条件：</strong>推广主函数开头只检查是否为编译后的程序（<code>@Compiled</code>，第 756 行）和推广地址是否以 http(s) 开头（第 14436 行），不检查联网、地区、语言、虚拟机或日期。</li>
         <li><strong>隐藏的只是外壳：</strong>窗口隐藏的是 vbs 和 cmd 这一层。下载下来的程序以 <code>start /B</code> 正常启动，用户能否看到它的界面，取决于服务器下发的是什么文件。</li>
       </ul>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/07-checks-and-execution.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/07-checks-and-execution.png" width="1440" height="1204" loading="lazy" alt="带行号的代码摘录：推广主函数开头只检查是否为编译后程序和地址格式，批处理由服务器决定文件名并在文件存在时直接运行"></a><figcaption>图 10 · 前置检查与下载执行。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/07-checks-and-execution.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/07-checks-and-execution.png" width="1440" height="1204" loading="lazy" alt="带行号的代码摘录：推广主函数开头只检查是否为编译后程序和地址格式，批处理由服务器决定文件名并在文件存在时直接运行"></a><figcaption>图 11 · 前置检查与下载执行。点击查看原尺寸。</figcaption></figure>
       <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 与代码一致</span><h3>部署后、首次登录前</h3></div>
-      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R2-before-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R2-before-logon.png" width="1440" height="907" loading="lazy" alt="虚拟机截图：开箱界面的命令行中，RunOnce 含 SoftInst 项，隐藏的 SoftInst 目录里有 inst.cmd、inst.vbs 和 wget.exe"></a><figcaption>图 11 · 运行截图：开箱时查看 RunOnce 与隐藏目录。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R2-before-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R2-before-logon.png" width="1440" height="907" loading="lazy" alt="虚拟机截图：开箱界面的命令行中，RunOnce 含 SoftInst 项，隐藏的 SoftInst 目录里有 inst.cmd、inst.vbs 和 wget.exe"></a><figcaption>图 12 · 运行截图：开箱时查看 RunOnce 与隐藏目录。点击查看原尺寸。</figcaption></figure>
       <div class="table-scroll"><table><thead><tr><th>代码描述</th><th>运行中看到的</th></tr></thead><tbody>
         <tr><td>写入 RunOnce，值名 <code>SoftInst</code>，盘符替换为 <code>%SystemDrive%</code></td><td><code>"%SystemDrive%\SoftInst\20261121235714HJTCEE\inst.vbs"</code></td></tr>
         <tr><td>系统盘根目录下的隐藏目录，子目录为“时间戳＋6 位随机字符”</td><td><code>C:\SoftInst</code> 带隐藏属性；子目录名为 23:57:14 加 6 个字母</td></tr>
@@ -157,13 +162,22 @@ $HWHOAL["session"]["startup_urls"] = …
         <tr><td>VBS 以隐藏窗口运行批处理</td><td><code>objShell.Run …inst.cmd,0,False</code></td></tr>
       </tbody></table></div>
       <div class="finding-heading"><span class="evidence-tag supplement">运行验证</span><h3>首次登录后</h3></div>
-      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R5-after-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R5-after-logon.png" width="1440" height="1026" loading="lazy" alt="虚拟机截图：首次登录后 RunOnce 已空，SoftInst 下只剩两层空目录"></a><figcaption>图 12 · 运行截图：首次登录后，RunOnce 已清空，下载脚本和下载器已被删除。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R5-after-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R5-after-logon.png" width="1440" height="1026" loading="lazy" alt="虚拟机截图：首次登录后 RunOnce 已空，SoftInst 下只剩两层空目录"></a><figcaption>图 13 · 运行截图：首次登录后，RunOnce 已清空，下载脚本和下载器已被删除。点击查看原尺寸。</figcaption></figure>
       <ul class="audit-steps">
         <li><strong>运行并清理：</strong>RunOnce 中的 <code>SoftInst</code> 在首次登录时被执行并清空；<code>inst.cmd</code>、<code>inst.vbs</code>、<code>wget.exe</code> 都被删除。</li>
         <li><strong>留下空目录：</strong>代码写的是删除自身所在目录，但实际留下了两层空的隐藏目录。最可能的原因是批处理先把这个目录设为当前目录，Windows 不允许删除正被使用的当前目录，于是只删掉了内容。这是推测。</li>
         <li><strong>断网时没有装上东西：</strong>与封装前对比，已安装程序和服务列表没有变化；新增的程序文件、计划任务和启动项都属于 Windows 或 Microsoft。</li>
       </ul>
-      <p class="scope-note">联网时服务器实际下发什么、装上什么，没有验证。隐藏窗口、隐藏目录和结束后清理是观察到的具体行为；“隐瞒用户”“未经同意”“恶意软件”是更进一步的判断，需要更多证据支撑。</p>
+      <div class="finding-heading"><span class="evidence-tag supplement">运行验证 · 联网</span><h3>联网时：下载请求已发出，在解析域名时失败</h3></div>
+      <p>第二次运行中，部署生成的 <code>inst.cmd</code> 与第一次逐字节相同。首次登录时批处理照常运行，在同一秒内依次请求了 <code>[推广域名]/d/[版本标识]/1</code>、<code>/2</code>、<code>/3</code>，三次都在解析推广域名时失败（“不知道这样的主机”）。wget 遇到这类错误不会重试，批处理只在首次登录时运行一次，之后也不会补下载。事后在同一台虚拟机里查询，推广域名已能解析，指向服务器前端的 Web 应用防火墙。因此失败最可能的原因是登录那一刻网络还没有完全就绪；即使解析成功，按图 8 的情况，请求多半也会被防火墙拒绝。</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R7-download-logs.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R7-download-logs.png" width="1440" height="470" loading="lazy" alt="虚拟机截图：三个下载日志，均在同一秒请求下载地址，并因无法解析推广域名而失败，域名已遮挡"></a><figcaption>图 14 · 运行截图（联网）：三个下载日志。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R8-softinst-online.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R8-softinst-online.png" width="1002" height="1067" loading="lazy" alt="虚拟机截图：联网观察 10 分钟后，隐藏下载目录中只有三个 180 字节的日志和原有的脚本与下载器"></a><figcaption>图 15 · 运行截图（联网）：观察结束时的下载目录。因为加了“禁止删除”权限，脚本和下载器被保留下来。点击查看原尺寸。</figcaption></figure>
+      <ul class="audit-steps">
+        <li><strong>屏幕上：</strong>登录后只出现了该软件部署程序的通知“请不要关闭/重启计算机，系统部署正在进行”；之后 10 分钟内没有出现其他窗口或安装界面。</li>
+        <li><strong>没有装上东西：</strong>下载目录里除了原有的脚本和下载器，只多了三个 180 字节的日志。与第一次运行的首次登录后对比，新增的程序（Edge 与 WebView2 更新、Copilot）、服务和计划任务都来自 Microsoft，是联网后 Windows 自己的更新。</li>
+        <li><strong>抓包没有覆盖下载那一刻：</strong>抓包文件中能读出的部分从下载请求之后约 40 秒开始，期间大部分流量是 Windows 与 Edge 的更新。这一段里所有域名查询和加密连接的目标都属于 Microsoft，没有出现推广域名。下载失败的原因只能根据日志和事后的域名查询判断。</li>
+      </ul>
+      <p class="scope-note">两次运行都没有取得服务器下发的文件，服务器对中国大陆用户会下发什么、装上什么，仍未验证。隐藏窗口、隐藏目录和结束后清理是观察到的具体行为；“隐瞒用户”“未经同意”“恶意软件”是更进一步的判断，需要更多证据支撑。</p>
     </section>
 
     <section id="disclosure" class="investigation-section">
@@ -171,7 +185,7 @@ $HWHOAL["session"]["startup_urls"] = …
       <div class="finding-heading"><span class="evidence-tag">静态代码与运行均确认</span><h3>程序内的许可协议没有提到这些行为</h3></div>
       <p>许可协议文本由第 17224–17245 行的函数生成，界面配有“同意／不同意”按钮（第 15588–15589 行）。如果在菜单里取消勾选“许可协议”，点击封装时会提示未接受协议并终止（第 25250–25254 行）。运行时显示的协议与代码一致。</p>
       <p>协议共 8 条，内容是：封装前和部署前备份、不对系统故障负责、不保证所有硬件可用、必须完整分发、允许复制分发、可能被安全软件拦截，以及禁止破解和反编译。其中<strong>没有提到</strong>修改主页、下载或安装软件、推广或广告。按“推广、广告、推荐、赞助、捆绑、主页、首页”等关键词搜索全部界面字符串，与推广有关的只有菜单项“VIP 免广告”和 VIP 认证对话框里的“可开启更多功能或免广告”。</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/08-license.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/08-license.png" width="1440" height="1052" loading="lazy" alt="带行号的代码摘录：程序内许可协议的 8 条正文，以及未接受协议时终止封装的分支"></a><figcaption>图 13 · 程序内的许可协议。协议正文中没有提到主页、下载、安装或推广。点击查看原尺寸。</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence/08-license.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence/08-license.png" width="1440" height="1052" loading="lazy" alt="带行号的代码摘录：程序内许可协议的 8 条正文，以及未接受协议时终止封装的分支"></a><figcaption>图 16 · 程序内的许可协议。协议正文中没有提到主页、下载、安装或推广。点击查看原尺寸。</figcaption></figure>
       <p class="scope-note">这只能说明程序内没有相关告知。官网、下载页或其他渠道是否另有说明，不在本次分析范围内。</p>
     </section>
 
@@ -180,7 +194,7 @@ $HWHOAL["session"]["startup_urls"] = …
       <p>我们参考的一则论坛回答提到：标准版会修改主页、联网后下载安装软件，VIP 可以免广告。我们把这些说法当作<strong>待核对线索</strong>，与样本代码和运行结果逐项比对，未独立核对完整帖文。</p>
       <div class="table-scroll"><table><thead><tr><th>线索</th><th>本样本中的对应证据</th><th>判断</th></tr></thead><tbody>
         <tr><td>修改浏览器主页</td><td>部署分支写入 Edge 初始偏好设置；运行中 Edge 第二次启动即打开推广地址</td><td>代码与运行均支持</td></tr>
-        <tr><td>后续下载安装文件</td><td>下载器、三个下载项、首次登录时运行；运行中确认了安排、运行与清理</td><td>支持；联网时实际下发内容未验证</td></tr>
+        <tr><td>后续下载安装文件</td><td>下载器、三个下载项、首次登录时运行；运行中确认了安排、运行与清理，联网时确实发出了下载请求</td><td>支持；请求在中国大陆以外的网络下失败，实际下发内容未验证</td></tr>
         <tr><td>VIP 免广告</td><td>菜单、认证提示、成功后关闭推广标志</td><td>代码层面支持</td></tr>
         <tr><td>一定是 2345 或 360 软件</td><td>导航站地址只是未用到的默认值；运行中打开的是该软件自己的推广域名；没有取得下发文件</td><td>不能确认具体安装软件</td></tr>
         <tr><td>所有 2026 年软件都这样</td><td>只研究了一个版本，深入分析仅限 x64</td><td>不能外推</td></tr>
@@ -193,7 +207,7 @@ $HWHOAL["session"]["startup_urls"] = …
     <section id="limits" class="investigation-section">
       <h2>09 · 还缺什么证据</h2>
       <ul class="audit-steps">
-        <li><strong>联网运行：</strong>记录服务器实际响应、下载文件的哈希与签名，以及装上了什么。只出现导航站字符串并不够。</li>
+        <li><strong>中国大陆网络下的联网运行：</strong>本次联网验证在中国大陆以外的网络进行，下载失败、推广页被拦截。需要在中国大陆网络下记录服务器实际响应、下载文件的哈希与签名，以及装上了什么。只出现导航站字符串并不够。</li>
         <li><strong>普通与 VIP 对照：</strong>需要合法有效的两种状态在相同环境、相同配置下对比，而不是修改认证程序或绕过验证。</li>
         <li><strong>程序外的告知：</strong>官网、下载页等渠道是否说明了这些行为。</li>
         <li><strong>更多环境：</strong>其他 Windows 版本，以及关闭“部署控制”后部署能否正常完成。</li>
@@ -203,14 +217,14 @@ $HWHOAL["session"]["startup_urls"] = …
 
     <section id="wording" class="investigation-section">
       <h2>10 · 研究结论</h2>
-      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了一次断网运行验证。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现。推广标志默认开启，只有 VIP 认证能关闭（关闭整个“部署控制”也能避免，但会失去全部部署功能）；程序内的许可协议没有提到这些行为。由于没有在联网状态下运行，尚不清楚实际会下载哪些文件、安装哪些软件；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
+      <blockquote>我们对某封装软件的 x64 样本做了离线静态分析，并在虚拟机中做了断网、联网各一次运行验证。样本中的推广流程会在用封装出来的系统部署的每台电脑上运行：把 Edge 启动页改为推广地址，并在部署后首次登录时下载、运行服务器下发的文件，且不做任何校验；运行验证中，这些安排全部按代码实际出现，联网时也确实向推广服务器发出了下载请求。推广标志默认开启，只有 VIP 认证能关闭（关闭整个“部署控制”也能避免，但会失去全部部署功能）；程序内的许可协议没有提到这些行为。联网验证在中国大陆以外的网络进行，下载失败、推广页被服务器拦截，因此尚不清楚服务器对中国大陆用户会下载哪些文件、安装哪些软件；以上结论也不能外推到其他版本或在线服务的当前状态。</blockquote>
     </section>
 
     <section class="investigation-section investigation-notes">
       <h2>证据保管与复核说明</h2>
       <p>本地分析目录中保存了样本登记、提取清单、脚本文本、索引表、字符串表、只读解码脚本、运行验证的收集结果与原始截图。网页仅展示必要的行为摘录，不附带目标 EXE、完整反编译文本或认证密钥材料。</p>
       <p>文中行号均指 x64 提取后、保留行号的 <code>resolved.au3.txt</code>，不是厂商源码行号。匿名函数名为样本自身的混淆名称；表格和流程描述是本次调查的解释。SHA1 一致性只用于检查解码数据，不是安全认证。</p>
-      <p>页面中的软件名称、版本号、样本文件名和推广域名均作匿名处理。代码摘录图按还原文本的真实行号排版生成，关键行以背景色标记，不是运行实测画面。运行截图来自测试虚拟机，软件名称、部署程序路径、推广域名和版本标识已用色块遮挡，其余内容未作修改。</p>
+      <p>页面中的软件名称、版本号、样本文件名和推广域名均作匿名处理。代码摘录图按还原文本的真实行号排版生成，关键行以背景色标记，不是运行实测画面。运行截图来自测试虚拟机，软件名称、部署程序路径、推广域名和版本标识已用色块遮挡，其余内容未作修改。第二次运行的截图中，时间先后出现两种时钟：联网前虚拟机时钟比实际慢 8 小时，联网后自动对时。</p>
       <p>工具方法参考：<a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper 项目说明</a>。本次研究参考了论坛回答截图。</p>
     </section>
   </main>
