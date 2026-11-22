@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A static investigation of an unnamed Windows preparation tool: sample hashes, VIP ad-free controls, homepage changes, external file downloads and execution, and the limits of offline analysis.">
-  <title>An unnamed preparation tool: static investigation · JY Sysprep</title>
+  <meta name="description" content="An investigation of an unnamed Windows preparation tool: sample hashes, VIP ad-free controls, Edge startup-page changes, external file downloads and execution, license disclosure, and the results and limits of one offline runtime check.">
+  <title>An unnamed preparation tool: investigation · JY Sysprep</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css?v=11">
-  <link rel="stylesheet" href="./investigation.css?v=4">
+  <link rel="stylesheet" href="./investigation.css?v=6">
   <link rel="stylesheet" href="./theme.css?v=1">
   <script src="./theme.js?v=1"></script>
 </head>
@@ -16,28 +16,34 @@
   <header class="header"><div class="nav wrap"><a class="brand" href="./index.html?lang=en"><img src="./favicon.svg" width="32" height="32" alt=""><span>JY <b>Sysprep</b></span></a><nav aria-label="Navigation"><a href="./index.html?lang=en">Home</a><a href="./download.html?lang=en">Download</a><a href="#findings" aria-current="page">Investigation</a></nav><a class="language" href="./investigation.html" lang="zh-CN" hreflang="zh-CN" aria-label="阅读中文版">中文</a></div></header>
   <main id="main" class="wrap investigation-main">
     <header class="investigation-heading">
-      <h1>An unnamed preparation tool:<br>static investigation</h1>
-      <p class="investigation-lead">Tracing the relationship between VIP ad-free status, browser homepage changes, and external file downloads and execution.</p>
-      <p class="investigation-meta">Investigation date: 2026-10-22 · Status: static analysis completed; no runtime testing</p>
-      <p class="investigation-meta">Research and report: Codex</p>
+      <h1>An unnamed preparation tool:<br>investigation</h1>
+      <p class="investigation-lead">Tracing, from the sample’s code and one virtual-machine run, the relationship between VIP ad-free status, browser homepage changes, and external file downloads and execution.</p>
+      <p class="investigation-meta">Investigation date: 2026-10-22 · Last updated: 2026-11-22 · Status: static analysis completed; one offline runtime check completed; online behavior not verified</p>
+      <p class="investigation-meta">Research and report: Codex, Claude · Earlier versions: <a href="./history/investigation-2026-10-22-en.html">2026-10-22</a>, <a href="./history/investigation-2026-11-21-en.html">2026-11-21</a></p>
     </header>
 
     <section id="findings" class="investigation-summary" aria-label="Investigation summary">
-      <p><strong>The x64 sample examined in this study contains browser homepage modification and external file download-and-execution flows linked to VIP ad-free status.</strong> The reconstructed code reveals a call chain from an enabled-by-default flag, through saved preparation settings and deployment checks, to homepage changes and download-and-execution preparation.</p>
-      <p>This was an offline static analysis. We did not contact the download server or run the target, so we do not know which files would actually be downloaded or which applications would be installed. The code also includes a “VIP ad-free” menu; successful authentication disables the relevant flag. Its actual effect, user-facing disclosures, and opt-out options still require isolated runtime testing.</p>
-      <p class="scope-note">These findings apply only to the samples and static code described below. They do not establish the behavior of every historical version, the current online service, or every environment, and do not constitute an antivirus test.</p>
+      <p><strong>The x64 sample we examined contains a promotion flow: on every computer deployed from a prepared image, it changes the Edge startup page to a promotion address and, at the first sign-in after deployment, downloads and runs files delivered by a server.</strong> In one offline virtual-machine run, the hidden folder, download scripts, startup entry, and Edge startup-page change predicted by the code all actually appeared.</p>
+      <ul class="audit-steps">
+        <li><strong>On by default, with no switch of its own in the interface:</strong> the promotion flag is on by default, saved with the preparation settings, and read during deployment. Only VIP authentication clears the flag; turning off “Deployment control” as a whole also prevents the promotion, at the cost of every deployment feature.</li>
+        <li><strong>Those affected are the deployed computers:</strong> the deployment program that carries the promotion is written into the target system in stage two, and whether the promotion runs is decided at the moment of preparation. The people using those computers never see the tool’s interface or agreement.</li>
+        <li><strong>Downloads are not verified:</strong> the server decides the file name, and any successful download is run without hash or signature checks.</li>
+        <li><strong>The agreement does not mention it:</strong> the in-program license agreement does not mention homepage changes, downloading or installing software, or promotion.</li>
+      </ul>
+      <p>The runtime check was offline and did not contact the promotion server, so which files would be downloaded and which applications installed when online remains unknown.</p>
+      <p class="scope-note">These findings apply only to the samples, static code, and single run described below. They do not establish the behavior of every historical version, the current online service, or every environment, and do not constitute an antivirus test.</p>
     </section>
 
-    <nav class="investigation-toc" aria-label="Contents"><a href="#samples">01 · Samples examined</a><a href="#method">02 · Analysis and evidence handling</a><a href="#vip">03 · VIP status and the promotion flag</a><a href="#homepage">04 · Homepage changes beyond URL strings</a><a href="#download-chain">05 · Download, execution, deferred startup, and cleanup</a><a href="#comparison">06 · Checking the reference post</a><a href="#limits">07 · Evidence still needed</a><a href="#wording">08 · Research conclusion</a></nav>
+    <nav class="investigation-toc" aria-label="Contents"><a href="#samples">01 · Samples examined</a><a href="#method">02 · Analysis and evidence handling</a><a href="#vip">03 · VIP status and the promotion flag</a><a href="#deployment">04 · When and on which computer it runs</a><a href="#homepage">05 · Edge startup page changed to the promotion address</a><a href="#download-chain">06 · Download, execution, and cleanup</a><a href="#disclosure">07 · License agreement and disclosure</a><a href="#comparison">08 · Checking the reference post</a><a href="#limits">09 · Evidence still needed</a><a href="#wording">10 · Research conclusion</a></nav>
 
     <section id="samples" class="investigation-section">
       <h2>01 · Samples examined</h2>
       <p>According to its description, the unnamed preparation tool is a Windows preparation and deployment assistant built around the system’s own <code>sysprep.exe</code>. It combines system configuration, preparation, and deployment operations into automated workflows.</p>
-      <p>The sample package examined in this study contains two EXE files and one DAT file. We refer to it throughout as <strong>an unnamed preparation tool</strong>, without publishing its actual name, exact version number, or signer identity. Both EXEs returned <strong>Valid</strong> in our signature checks.</p>
+      <p>The sample package examined contains two EXE files and one DAT file. We refer to it throughout as <strong>an unnamed preparation tool</strong>, without publishing its actual name, exact version number, or signer identity. Both EXEs returned <strong>Valid</strong> in our signature checks.</p>
       <div class="table-scroll"><table><thead><tr><th>Sample</th><th>Size</th><th>Analysis scope</th></tr></thead><tbody>
-        <tr><td>Unnamed tool: x64 sample</td><td>14,231,472 bytes</td><td>Metadata, signature, script extraction, string reconstruction, and call-chain analysis</td></tr>
-        <tr><td>Unnamed tool: x86 sample</td><td>12,615,600 bytes</td><td>Metadata, signature, and script extraction; no equivalent in-depth call-chain analysis</td></tr>
-        <tr><td>Unnamed tool: DAT file</td><td>256 bytes</td><td>File inventory and hash only; no authentication data modified or forged</td></tr>
+        <tr><td>Unnamed tool: x64 sample</td><td>14,231,472 bytes</td><td>Metadata, signature, script extraction, string reconstruction, call-chain analysis, and a virtual-machine runtime check</td></tr>
+        <tr><td>Unnamed tool: x86 sample</td><td>12,615,600 bytes</td><td>Metadata, signature, script extraction, and structural comparison; no call-chain analysis</td></tr>
+        <tr><td>Unnamed tool: DAT file</td><td>256 bytes</td><td>File inventory and hash; used alongside the sample at runtime; no authentication data modified or forged</td></tr>
       </tbody></table></div>
       <details class="audit-details"><summary>Show SHA256 hashes to identify the exact files</summary>
         <dl class="sample-hashes">
@@ -46,118 +52,166 @@
           <dt>Unnamed tool: DAT file</dt><dd><code>8BB7E85172FEE998E1A7B7E3ECFCAC8E20E8DF9FE5436E26CD2AAE9BA76CE365</code></dd>
         </dl>
       </details>
-      <p class="scope-note">A valid signature means the local system could verify the signer and file integrity. It does not establish an absence of promotions or replace comparison with an official download hash. No corresponding officially published hashes were obtained in this investigation.</p>
+      <p class="scope-note">A valid signature confirms the signer identity and file integrity. It does not mean the tool has no promotion, and it does not replace comparison with officially published hashes, which were not available.</p>
     </section>
 
     <section id="method" class="investigation-section">
       <h2>02 · Analysis and evidence handling</h2>
+      <p>The <strong>static analysis</strong> was carried out offline without running the sample:</p>
       <ol class="audit-steps">
         <li><strong>Read-only examination.</strong> We recorded file sizes, SHA256 hashes, version information, and signatures while leaving the original samples unchanged.</li>
-        <li><strong>Offline script extraction.</strong> After identifying the AutoIt SCRIPT resource and EA06 markers, we used <a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper</a> to extract both scripts. They were stored as <code>.au3.txt</code> to avoid accidental script execution.</li>
-        <li><strong>Data reconstruction without target execution.</strong> We parsed function and string lookup tables and decoded resources using the system CryptoAPI in temporary memory. We did not interpret AutoIt Execute expressions or launch the target.</li>
-        <li><strong>Integrity checks.</strong> All three decoded blocks of the x64 main string table passed the script’s embedded SHA1 consistency checks. We recovered 7,163 string/numeric entries and 1,743 function-table entries. Replacing function and value lookups preserved the extracted script’s line numbers.</li>
-        <li><strong>Tracing the branches.</strong> We followed menu events, saved settings, and deployment entry points rather than drawing conclusions from strings such as “VIP” or “2345” alone.</li>
+        <li><strong>Offline script extraction.</strong> After identifying the AutoIt SCRIPT resource and EA06 markers, we used <a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper</a> to extract both scripts, stored as <code>.au3.txt</code> to avoid accidental execution.</li>
+        <li><strong>Data reconstruction without target execution.</strong> We parsed function and string lookup tables and decoded resources using the system CryptoAPI in temporary memory. We did not interpret AutoIt Execute expressions.</li>
+        <li><strong>Integrity checks.</strong> All three decoded blocks of the x64 main string table passed the script’s embedded SHA1 consistency checks. We recovered 7,163 string/numeric entries and 1,743 function-table entries. Replacing lookups preserved the extracted script’s line numbers.</li>
+        <li><strong>Tracing the branches.</strong> We followed menu events, saved settings, and deployment entry points, and enumerated every reference to the key functions and fields, rather than drawing conclusions from strings such as “VIP” or “2345” alone.</li>
       </ol>
-      <p class="scope-note">Decoding used temporary cryptographic contexts; no persistent key containers were created. Neither the target, extracted scripts, nor generated batch files were run. No requests were sent to the promotion server and no files were downloaded from it.</p>
+      <p>The <strong>runtime check</strong> took place on 2026-11-22 in the user’s VMware virtual machine and was operated by the user. A read-only collection script recorded the state before preparation, after deployment but before the first sign-in, and after the first sign-in, without running any program it found.</p>
+      <div class="table-scroll"><table><thead><tr><th>Item</th><th>Conditions of the runtime check</th></tr></thead><tbody>
+        <tr><td>System</td><td>Windows build 26300.9457, Chinese, single system, system drive C:, audit mode</td></tr>
+        <tr><td>Sample</td><td>The x64 sample; its SHA256 was checked inside the VM and matches the table above</td></tr>
+        <tr><td>Preparation settings</td><td>No VIP login; every option left at its default, except the completion action set to “shut down when finished”</td></tr>
+        <tr><td>Two stages</td><td>Stage one ran in Windows; stage two ran in WinPE, as the tool instructs</td></tr>
+        <tr><td>Network</td><td>The network adapter was disconnected after stage two; deployment, setup, and the first sign-in were all offline</td></tr>
+        <tr><td>Difference from the default flow</td><td>This Windows build offers no local-account option during offline setup, so a local account was created with the built-in <code>start ms-cxh:localonly</code>; unrelated to the promotion</td></tr>
+      </tbody></table></div>
+      <p class="scope-note">The static analysis did not run the target, the extracted scripts, or the generated batch file, and did not contact the promotion server. The virtual machine was offline throughout and downloaded no promotion files. The originals were not modified and no VIP state was changed.</p>
     </section>
 
     <section id="vip" class="investigation-section">
       <h2>03 · VIP status and the promotion flag</h2>
-      <p>The unnamed tool’s description states, translated here from Chinese:</p>
+      <p>The tool’s description states:</p>
       <blockquote>The professional edition includes all standard-edition features, with zero ads and zero promotions. VIP access is required to download and use it.</blockquote>
-      <p>How are promotions linked to VIP status? We traced the relevant flow in the sample’s code.</p>
-      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>Enabled by default; disabled after VIP authentication</h3></div>
-      <p>The function <code>OGEOPWVWSRRVXDF</code> stores a state initialized to <code>1</code>. A normal read returns its current value, while a supplied argument updates it. Two configuration-collection routines save this state in the <code>SSP</code> field.</p>
+      <p>How, then, are ads and promotion tied to VIP status?</p>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>The flag is on by default and cleared after successful VIP authentication</h3></div>
+      <p>The function <code>OGEOPWVWSRRVXDF</code> holds a state initialized to <code>1</code>. A plain call returns the current state; a call with an argument updates it. Two settings-collection routines write this state into the <code>SSP</code> field of the preparation settings.</p>
       <pre class="evidence-code"><code>Initial state: $DFABDH = 1
 Saved setting: $AEIIFX["SSP"] = OGEOPWVWSRRVXDF()
 VIP success branch: OGEOPWVWSRRVXDF(0)</code></pre>
-      <p class="evidence-location">Locations in the reconstructed x64 script: lines 31636–31643; 7016 and 16416; 6729–6747. The excerpt above preserves identifiers with simplified formatting.</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/01-vip-switch.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/01-vip-switch.png" width="1440" height="910" loading="lazy" alt="Numbered code excerpts: the promotion flag starts at 1, is saved as SSP, and is set to 0 in the VIP success-state branch"></a><figcaption>Figure 1 · Initial state, saved configuration, and the VIP success branch. Click for full size.</figcaption></figure>
-      <p>The menu includes <strong>“VIP ad-free.”</strong> Its event handler enters the authentication routine. Successful authentication displays <strong>“VIP authentication completed”</strong> and disables the flag in the success-state branch. The interface also states: <strong>“Sign in and complete VIP authentication to unlock more features or remove ads.”</strong> These interface labels are translated from Chinese.</p>
+      <p class="evidence-location">Locations: lines 31636–31643; lines 7016 and 16416; lines 6729–6747 of the reconstructed x64 script. The excerpt preserves identifiers with simplified formatting.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/01-vip-switch.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/01-vip-switch.png" width="1440" height="910" loading="lazy" alt="Line-numbered code excerpt: the promotion flag defaults to 1, is saved as SSP, and is set to 0 in the VIP success branch"></a><figcaption>Figure 1 · Initial state, saved settings, and the VIP success branch. Click to view at full size.</figcaption></figure>
+      <p>The menu includes <strong>“VIP ad-free”</strong>. The menu event enters authentication; on success the tool shows <strong>“VIP authentication complete”</strong> and clears the flag in the success branch. The authentication dialog says that signing in to VIP <strong>unlocks more features or removes ads</strong>, without explaining what the ads are. The dialog seen at runtime matches the code and lists the offline period of each of the three VIP types.</p>
       <p class="evidence-location">Locations: lines 11045–11046, 27533, 27875, and 30920.</p>
-      <p>The sample links VIP authentication to ad-free status. However, this offline analysis cannot establish that purchasing VIP guarantees a clean system.</p>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>Only one off switch for the promotion flag</h3></div>
+      <p>The flag function is referenced four times in the whole script: <code>OGEOPWVWSRRVXDF(0)</code> at line 6745, executed only when VIP is authenticated; lines 7016 and 16416, which store the current value in <code>SSP</code>; and line 18166, a function registration table generated by the obfuscator, in which every function is listed this way, not a call. The <code>SSP</code> field is written only in those two places and read once during deployment (line 26401). There is no checkbox in the interface, no corresponding preparation setting, and no command-line option that changes it. In the runtime check, every settings page of both stages was reviewed, and none offered an option about the homepage, recommended software, or promotion.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/05-flag-references.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/05-flag-references.png" width="1440" height="932" loading="lazy" alt="Line-numbered code excerpt: all four references to the promotion flag; the only off switch is in the VIP-authenticated branch, plus two writes, a function registration table, and one read during deployment"></a><figcaption>Figure 2 · Every reference to the promotion flag. Click to view at full size.</figcaption></figure>
+      <p>The <strong>promotion flag itself</strong> can therefore only be cleared by VIP authentication. A blunter route exists: when the “Deployment control” switch on the stage-two Deployment page (on by default) is turned off, the deployment controller is not imported and the deployment entry is not registered (lines 23705–23717), so by the code the deployment flow that contains the promotion does not run. All deployment features, such as computer naming, drivers, deployment background, and deployment plug-ins, are lost with it, so it is not a dedicated opt-out for the promotion; whether deployment still completes normally with it off was not verified.</p>
+      <div class="finding-heading"><span class="evidence-tag supplement">Inference</span><h3>Decided at the moment of preparation</h3></div>
+      <p>Deployment reads the settings saved during preparation (lines 20836–20841) and does not check VIP status again, so whether the promotion runs is decided by the preparer’s VIP status at the moment of preparation and fixed into the image. VIP is time-limited, and the expiry notice says VIP privileges become unavailable after expiry (lines 19236–19246). This suggests that images prepared after VIP expires carry the promotion again, while images prepared before expiry are unaffected. This has not been verified.</p>
+      <p class="scope-note">This analysis alone cannot guarantee that a system prepared with VIP is clean; no standard-versus-VIP comparison was done.</p>
+    </section>
+
+    <section id="deployment" class="investigation-section">
+      <h2>04 · When and on which computer it runs</h2>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in code and at runtime</span><h3>The deployment program is written in stage two; the promotion runs during deployment</h3></div>
+      <p>When preparing in normal Windows, the confirmation dialog says to enter PE immediately after the reboot to run stage two. Stage two mounts the target system’s registry in PE, imports the deployment controller, and registers the deployment entry (lines 2206–2226 and from 27738; its error message reads that importing the deployment controller failed). Booting without stage two leaves the deployment controller out, and the promotion never appears. In the runtime check, “Deployment control” was on by default in stage two, and the screen during deployment showed that deployment program’s interface.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R1-deploy-page.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R1-deploy-page.png" width="1083" height="686" loading="lazy" alt="VM screenshot: the Deployment page in stage two with Deployment control on by default; the computer-name prefix and plug-in name are covered"></a><figcaption>Figure 3 · Runtime screenshot: the stage-two Deployment page, with “Deployment control” on by default. Click to view at full size.</figcaption></figure>
+      <p>The deployment program adds the in-deployment stage to its run list unconditionally (lines 9171–9174). At that stage, the deployment function <code>GSOWTITXQQRLSFI</code> calls the promotion check <code>XPAWHQZSWVFQKEN</code>, which continues only if <code>Other → SSP</code> or <code>Sysprep → SSP</code> is true, then passes the version identifier into the homepage change and download scheduling.</p>
+      <ol class="flow-list"><li>Read SSP from the preparation settings</li><li>Build the promotion address and version identifier</li><li>Change the homepage and schedule downloads</li></ol>
+      <p class="evidence-location">Call chain: lines 20860–20862 → 27580–27586 → 26400–26404 → 21567–21570 → 8175–8199.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/02-deployment-gate.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/02-deployment-gate.png" width="1440" height="978" loading="lazy" alt="Line-numbered code excerpt: the deployment entry calls the SSP check, then passes the version identifier and flow flags"></a><figcaption>Figure 4 · Deployment entry point and SSP trigger condition. Click to view at full size.</figcaption></figure>
+      <div class="finding-heading"><span class="evidence-tag supplement">Interpretation</span><h3>Those affected are the deployed computers</h3></div>
+      <p>The promotion runs during deployment, and the downloads are scheduled for the first sign-in afterwards. The people using these computers never see the tool’s interface or agreement, while whether the promotion runs is decided by the preparer’s VIP status at the moment of preparation.</p>
     </section>
 
     <section id="homepage" class="investigation-section">
-      <h2>04 · Homepage changes beyond URL strings</h2>
-      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>The deployment branch calls Edge configuration routines</h3></div>
-      <p>The deployment function <code>GSOWTITXQQRLSFI</code> calls the promotion-check function <code>XPAWHQZSWVFQKEN</code>. It checks <code>Other → SSP</code> or <code>Sysprep → SSP</code> in the configuration and continues if either is true. A wrapper then passes the version identifier <code>[version identifier]</code>.</p>
-      <ol class="flow-list"><li>Read SSP from preparation settings</li><li>Combine the promotion address and version identifier</li><li>Enter homepage configuration routines</li></ol>
-      <p class="evidence-location">Call chain: lines 27580–27586 → 26400–26404 → 21567–21570 → 8175–8199.</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/02-deployment-gate.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/02-deployment-gate.png" width="1440" height="978" loading="lazy" alt="Numbered excerpts showing the deployment entry point, SSP condition, and version and flag arguments"></a><figcaption>Figure 2 · Deployment entry point and SSP trigger condition. Click for full size.</figcaption></figure>
-      <p>The homepage routine builds <code>homepage</code>, <code>session.restore_on_startup = 4</code>, and <code>startup_urls</code>, then writes Edge’s <code>initial_preferences</code>. It also contains operations to remove files such as <code>Secure Preferences</code> and <code>First Run</code>, and to delete the <code>Edge\PrefsLightweight</code> registry key. A branch closes <code>msedge.exe</code> processes when relevant active browser profiles are identified.</p>
+      <h2>05 · Edge startup page changed to the promotion address</h2>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>Edge initial preferences are written</h3></div>
+      <p>The homepage routine builds <code>homepage</code>, <code>session.restore_on_startup = 4</code>, and <code>startup_urls</code>, and writes them to Edge’s <code>initial_preferences</code>. The code also removes files such as <code>Secure Preferences</code> and <code>First Run</code>, deletes the <code>Edge\PrefsLightweight</code> registry entry, and has a branch that closes <code>msedge.exe</code> when relevant browser data is in use.</p>
       <pre class="evidence-code"><code>$HWHOAL["homepage"] = $SPBLSC
 $HWHOAL["session"]["restore_on_startup"] = 4
 $HWHOAL["session"]["startup_urls"] = …
 Target file: …\initial_preferences</code></pre>
-      <p class="evidence-location">Locations: entry point at lines 19424–19434 and QZCAPOPUBMUYTIY starting at line 13631. The ellipsis replaces a helper-function call in the original script.</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/03-homepage-write.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/03-homepage-write.png" width="1440" height="684" loading="lazy" alt="Numbered excerpts constructing homepage and startup_urls and writing Edge initial_preferences"></a><figcaption>Figure 3 · Writing Edge homepage and startup-page settings. Click for full size.</figcaption></figure>
-      <p>The file contains navigation-site URL mappings. However, this deployment call chain <strong>explicitly supplies</strong> an address assembled from a promotion domain and version identifier. Default mappings should not be confused with actual call arguments. The specific domain is not shown here.</p>
-      <p class="evidence-location">Mappings: lines 11058–11074. Domain: VDKJIZEGTCTNYND starting at line 31730, anonymized here. Version identifier: starting at line 27541.</p>
-      <p class="scope-note">This confirms operations and calls in the code, not an observed homepage change in this investigation. Edge versions, permissions, file state, and configuration may affect the result.</p>
+      <p class="evidence-location">Locations: entry point at lines 19424–19434 and the QZCAPOPUBMUYTIY function beginning at line 13631. Omitted portions are helper calls in the original script.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/03-homepage-write.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/03-homepage-write.png" width="1440" height="684" loading="lazy" alt="Line-numbered code excerpt: building homepage and startup_urls, then writing Edge initial_preferences"></a><figcaption>Figure 5 · Writing Edge homepage and startup-page settings. Click to view at full size.</figcaption></figure>
+      <p>The homepage function has a single caller in the whole script (line 8183), which always passes “promotion domain + version identifier”. The file also maps two navigation-site addresses (lines 11058–11074), but they are only the function’s defaults when it is called <strong>without an argument</strong>, so they are unused in this chain. Both carry query parameters that look like promotion channel IDs; this is an inference. Specific domains are not shown on this page.</p>
+      <div class="finding-heading"><span class="evidence-tag supplement">Runtime check · Matches the code</span><h3>Edge opens the promotion address from its second launch</h3></div>
+      <p>At runtime, <code>initial_preferences</code> did not exist before preparation and was created during deployment with exactly three entries: <code>homepage</code>, <code>restore_on_startup: 4</code>, and <code>startup_urls</code>, all pointing to the promotion address. The first time Edge was opened after the first sign-in, it showed Microsoft’s own welcome page; <strong>on the second launch, Edge opened the promotion address by itself</strong> (unreachable, since the machine was offline). The settings page shows “On startup: open a specific page” with only the promotion address listed. The <code>homepage</code> value is not visible in the interface because the Home button was not enabled. Users can change these settings back on that page.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R3-edge-startup.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R3-edge-startup.png" width="1440" height="898" loading="lazy" alt="VM screenshot: on its second launch Edge opens the promotion address by itself; the address is covered"></a><figcaption>Figure 6 · Runtime screenshot: Edge opens the promotion address on its second launch. Click to view at full size.</figcaption></figure>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R4-edge-settings.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R4-edge-settings.png" width="1440" height="899" loading="lazy" alt="VM screenshot: Edge settings set to open a specific page on startup, listing only the promotion address, which is covered"></a><figcaption>Figure 7 · Runtime screenshot: Edge set to open a specific page on startup. Click to view at full size.</figcaption></figure>
     </section>
 
     <section id="download-chain" class="investigation-section">
-      <h2>05 · Download, execution, deferred startup, and cleanup</h2>
-      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>A hidden execution chain with three download items</h3></div>
-      <p>The same promotion entry point sets the download address to <code>[promotion domain]/d/[version identifier]</code>. The item list starts as <code>1 2 3</code>. The generated batch file requests each item, identifies the saved file using the server-provided name, and then starts it.</p>
-      <p>The installation-preparation routine creates a <code>SoftInst</code> directory, marks it hidden, and creates a subdirectory named with a timestamp and random characters. It extracts <code>wget.exe</code> and generates <code>inst.cmd</code> and <code>inst.vbs</code>, the latter for hidden startup.</p>
-      <p>This deployment call passes flags <code>11 (1 + 2 + 8)</code>, without the <code>4</code> bit checked by the immediate-start branch. In this call chain, execution is scheduled through RunOnce subject to environment conditions. It does not establish that reaching this function immediately downloads and installs files.</p>
-      <div class="table-scroll"><table><thead><tr><th>Step</th><th>Behavior in the code</th><th>Location</th></tr></thead><tbody>
-        <tr><td>Preparation</td><td>Create hidden SoftInst and random subdirectories; write the downloader and startup scripts</td><td>From line 11899</td></tr>
-        <tr><td>Schedule startup</td><td>Choose hidden immediate execution or RunOnce according to flags and target conditions; includes offline SOFTWARE hive handling</td><td>HTSPSPIVEHIQVLX</td></tr>
-        <tr><td>Download</td><td>Request items 1, 2, and 3 with wget and read the server-provided save name</td><td>Lines 31576–31634</td></tr>
-        <tr><td>Execute</td><td>Start the saved file with start /B and query processes to wait for the preceding item</td><td>Lines 31611–31628</td></tr>
-        <tr><td>Cleanup</td><td>The generated batch file ends with a command to remove its own directory</td><td>Lines 31604–31610</td></tr>
+      <h2>06 · Download, execution, and cleanup</h2>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>Hidden folder, download scripts, and three download items</h3></div>
+      <p>The same promotion entry sets the download address to <code>[promotion domain]/d/[version identifier]</code> with items <code>1 2 3</code>. The installation routine creates a <code>SoftInst</code> folder at the root of the system drive, marks it hidden, creates a “timestamp + random characters” subfolder, drops <code>wget.exe</code>, and generates the download script <code>inst.cmd</code> and the hidden launcher <code>inst.vbs</code>. The batch file requests each item, reads the server-provided file name from the log, starts it with <code>start /B</code>, waits for the previous item to finish before running the next, and finally removes its own folder.</p>
+      <p class="evidence-location">Locations: installation routine from line 11899; batch file at lines 31576–31635; download settings at lines 31442–31456, overridden during deployment at line 8192.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/04-download-execute.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/04-download-execute.png" width="1440" height="978" loading="lazy" alt="Line-numbered code excerpt: generating the wget download command and running a saved file with start /B"></a><figcaption>Figure 8 · Download command, success branch, and file execution. Click to view at full size.</figcaption></figure>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>Scheduled for the first sign-in after deployment</h3></div>
+      <p>The deployment call passes flag <code>11 (1 + 2 + 8)</code>, without the <code>4</code> bit needed for immediate execution, and all three possible branches end by writing RunOnce: an offline target gets the offline hive (bit 1); running as SYSTEM with an empty <code>@HomeDrive</code> writes <code>HKLM\…\RunOnce</code> (bit 2, which matches the deployment stage); in a normal session bit 8 also writes RunOnce. On the normal deployment path, downloading and execution therefore happen <strong>at the first user sign-in after deployment</strong>, under the RunOnce value name <code>SoftInst</code>.</p>
+      <p class="evidence-location">Locations: lines 11929–11957 and 28700–28703.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/06-first-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/06-first-logon.png" width="1440" height="1216" loading="lazy" alt="Line-numbered code excerpt: the SYSTEM deployment-stage check, the branches for flag 11, and the RunOnce value SoftInst"></a><figcaption>Figure 9 · How installation is scheduled during deployment. Click to view at full size.</figcaption></figure>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in static code</span><h3>No verification of downloads and no preconditions</h3></div>
+      <ul class="audit-steps">
+        <li><strong>No verification:</strong> the batch file uses <code>--trust-server-names</code>, so the server decides the file name, and any successful download is run without hash or signature checks. Whatever the server delivers runs on the deployed computers. Regardless of intent, this is a security risk in itself: if the server or domain were compromised, every deployed computer would be affected.</li>
+        <li><strong>No preconditions:</strong> the promotion function only checks that it runs as a compiled program (<code>@Compiled</code>, line 756) and that the promotion address starts with http(s) (line 14436). It does not check network access, region, language, virtual machines, or dates.</li>
+        <li><strong>Only the wrapper is hidden:</strong> the hidden window belongs to the VBS and CMD layer. Downloaded programs are started normally with <code>start /B</code>; whether their interface is visible depends on what the server delivers.</li>
+      </ul>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/07-checks-and-execution.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/07-checks-and-execution.png" width="1440" height="1204" loading="lazy" alt="Line-numbered code excerpt: the promotion function only checks for a compiled program and the address format; the batch file lets the server name the file and runs it once saved"></a><figcaption>Figure 10 · Preconditions and download execution. Click to view at full size.</figcaption></figure>
+      <div class="finding-heading"><span class="evidence-tag supplement">Runtime check · Matches the code</span><h3>After deployment, before the first sign-in</h3></div>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R2-before-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R2-before-logon.png" width="1440" height="907" loading="lazy" alt="VM screenshot: in the setup command prompt, RunOnce contains SoftInst, and the hidden SoftInst folder holds inst.cmd, inst.vbs, and wget.exe"></a><figcaption>Figure 11 · Runtime screenshot: RunOnce and the hidden folder, checked during setup. Click to view at full size.</figcaption></figure>
+      <div class="table-scroll"><table><thead><tr><th>Described by the code</th><th>Observed at runtime</th></tr></thead><tbody>
+        <tr><td>RunOnce value <code>SoftInst</code>, drive letter replaced with <code>%SystemDrive%</code></td><td><code>"%SystemDrive%\SoftInst\20261121235714HJTCEE\inst.vbs"</code></td></tr>
+        <tr><td>Hidden folder at the root of the system drive; subfolder named “timestamp + six random characters”</td><td><code>C:\SoftInst</code> has the hidden attribute; the subfolder is 23:57:14 followed by six letters</td></tr>
+        <tr><td>Download script, hidden launcher, and downloader</td><td><code>inst.cmd</code> 1,006 bytes, <code>inst.vbs</code> 161 bytes, <code>wget.exe</code> 7,046,072 bytes (validly signed third-party build of wget)</td></tr>
+        <tr><td>Batch content</td><td>Download address <code>[promotion domain]/d/[version identifier]</code>, items <code>1 2 3</code>, <code>--trust-server-names</code>, <code>start /B</code>, then delete its own folder; identical to the code line by line</td></tr>
+        <tr><td>VBS runs the batch file in a hidden window</td><td><code>objShell.Run …inst.cmd,0,False</code></td></tr>
       </tbody></table></div>
-      <pre class="evidence-code"><code>Default item list: 1 2 3
-Deployment download base: [promotion domain]/d/[version identifier]
-Startup location: …\Microsoft\Windows\CurrentVersion\RunOnce
-The generated VBS uses WScript.Shell.Run with window style 0</code></pre>
-      <p class="evidence-location">Download configuration: lines 31442–31456. Address override during deployment: line 8192. Hidden VBS: from line 7336.</p>
-      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/04-download-execute.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/04-download-execute.png" width="1440" height="978" loading="lazy" alt="Numbered excerpts generating wget commands and starting successfully saved files with start /B"></a><figcaption>Figure 4 · Download commands, success branches, and file startup. Click for full size.</figcaption></figure>
-      <p><strong>Offline analysis confirms the presence of an external file download-and-execution flow.</strong> Because we did not contact the server or run the sample, the actual downloaded files and installed applications remain unknown. Their safety and installation results have not been tested.</p>
-      <p class="scope-note">Hidden windows, hidden directories, and cleanup are specific code behaviors. Conclusions such as concealment from users, lack of consent, or malware require additional interface and runtime evidence.</p>
+      <div class="finding-heading"><span class="evidence-tag supplement">Runtime check</span><h3>After the first sign-in</h3></div>
+      <figure class="code-evidence-figure"><a href="./images/investigation-runtime/R5-after-logon.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-runtime/R5-after-logon.png" width="1440" height="1026" loading="lazy" alt="VM screenshot: after the first sign-in RunOnce is empty and only two empty folders remain under SoftInst"></a><figcaption>Figure 12 · Runtime screenshot: after the first sign-in, RunOnce is empty and the scripts and downloader are deleted. Click to view at full size.</figcaption></figure>
+      <ul class="audit-steps">
+        <li><strong>Ran and cleaned up:</strong> the <code>SoftInst</code> RunOnce entry ran at the first sign-in and was cleared; <code>inst.cmd</code>, <code>inst.vbs</code>, and <code>wget.exe</code> were all deleted.</li>
+        <li><strong>Empty folders remain:</strong> the code deletes its own folder, but two empty hidden folders remained. The most likely reason is that the batch file makes that folder its current directory, which Windows does not allow to be deleted, so only the contents were removed. This is an inference.</li>
+        <li><strong>Nothing installed while offline:</strong> compared with the state before preparation, the installed programs and services did not change; the new program files, scheduled tasks, and startup entries all belong to Windows or Microsoft.</li>
+      </ul>
+      <p class="scope-note">What the server delivers and installs when online was not verified. Hidden windows, hidden folders, and cleanup are observed behaviors; characterizations such as “concealing from users,” “without consent,” or “malware” require further evidence.</p>
+    </section>
+
+    <section id="disclosure" class="investigation-section">
+      <h2>07 · License agreement and disclosure</h2>
+      <div class="finding-heading"><span class="evidence-tag">Confirmed in code and at runtime</span><h3>The in-program license agreement does not mention these behaviors</h3></div>
+      <p>The license text is generated by the function at lines 17224–17245 and shown with Accept and Decline buttons (lines 15588–15589). If the license menu item is unchecked, starting preparation shows a message that the agreement was not accepted and stops (lines 25250–25254). The agreement shown at runtime matches the code.</p>
+      <p>The agreement has eight clauses: back up before preparation and deployment, no liability for system failures, no guarantee for all hardware, distribute only as a whole, copying and sharing permitted, possible blocking by security software, and no cracking or decompiling. It <strong>does not mention</strong> homepage changes, downloading or installing software, promotion, or advertising. Searching all interface strings for terms meaning promotion, advertising, recommendation, sponsorship, bundling, and homepage, the only promotion-related text is the “VIP ad-free” menu item and the VIP dialog line about unlocking more features or removing ads.</p>
+      <figure class="code-evidence-figure"><a href="./images/investigation-evidence-en/08-license.png" target="_blank" rel="noopener noreferrer"><img src="./images/investigation-evidence-en/08-license.png" width="1440" height="1052" loading="lazy" alt="Line-numbered code excerpt: the eight clauses of the in-program license agreement and the branch that stops preparation when it is not accepted"></a><figcaption>Figure 13 · The in-program license agreement. The text does not mention homepage changes, downloads, installation, or promotion. Click to view at full size.</figcaption></figure>
+      <p class="scope-note">This only shows that there is no such disclosure inside the program. Whether the website, download page, or other channels disclose it is outside the scope of this analysis.</p>
     </section>
 
     <section id="comparison" class="investigation-section">
-      <h2>06 · Checking the reference post</h2>
-      <p>A forum reply consulted during this study claims that the standard edition changes homepages and downloads and installs software when online, while VIP removes ads. We extracted <strong>leads to verify</strong> from a screenshot of the reply and checked them against the code. We did not accept those claims as conclusions or independently review the complete thread.</p>
-      <div class="table-scroll"><table><thead><tr><th>Claim</th><th>Evidence in this sample</th><th>Assessment</th></tr></thead><tbody>
-        <tr><td>Browser homepage changes</td><td>The deployment branch connects to Edge initial-preferences modification</td><td>Supported at code level</td></tr>
-        <tr><td>Later file downloads and installation</td><td>Downloader, three items, execution, and RunOnce logic</td><td>Code-level support; actual delivered files unverified</td></tr>
-        <tr><td>VIP ad-free mode</td><td>Menu, authentication messages, and flag disabled on success</td><td>Supported at code level</td></tr>
-        <tr><td>The installed software must be 2345 or 360</td><td>Related URL strings exist, but no delivered files were obtained</td><td>Specific installed software not established</td></tr>
+      <h2>08 · Checking the reference post</h2>
+      <p>A forum reply we consulted stated that the standard edition changes the homepage, downloads and installs software once online, and that VIP removes the ads. We treated these statements as <strong>leads to verify</strong> and compared them with the code and the runtime results; the full thread was not independently reviewed.</p>
+      <div class="table-scroll"><table><thead><tr><th>Lead</th><th>Corresponding evidence in this sample</th><th>Assessment</th></tr></thead><tbody>
+        <tr><td>Browser homepage changes</td><td>The deployment branch writes Edge initial preferences; at runtime Edge opened the promotion address on its second launch</td><td>Supported by code and runtime</td></tr>
+        <tr><td>Later file downloads and installation</td><td>Downloader, three items, run at the first sign-in; scheduling, execution, and cleanup confirmed at runtime</td><td>Supported; files actually delivered when online unverified</td></tr>
+        <tr><td>VIP ad-free mode</td><td>Menu, authentication messages, and flag cleared on success</td><td>Supported at code level</td></tr>
+        <tr><td>The installed software must be 2345 or 360</td><td>The navigation-site addresses are unused defaults; at runtime the tool’s own promotion domain was opened; no delivered files obtained</td><td>Specific installed software not established</td></tr>
         <tr><td>All software released in 2026 behaves this way</td><td>Only one version examined, with in-depth analysis limited to x64</td><td>Cannot be generalized</td></tr>
-        <tr><td>No opt-out; VIP is required for a clean system</td><td>A VIP flag-disabling path exists; full interaction and all override conditions were not examined</td><td>Insufficient evidence for an exclusive claim</td></tr>
-        <tr><td>Opening the tool immediately changes the homepage</td><td>The confirmed entry point is in deployment and is controlled by SSP</td><td>Not established for launch alone</td></tr>
+        <tr><td>No opt-out; VIP is required for a clean system</td><td>Only VIP authentication clears the promotion flag, which has no switch of its own; turning off “Deployment control” as a whole also prevents it, at the cost of every deployment feature</td><td>Largely supported, but not absolute</td></tr>
+        <tr><td>Opening the tool immediately changes the homepage</td><td>The changes happen during deployment, on the deployed computers</td><td>Not supported for launch alone</td></tr>
       </tbody></table></div>
-      <a class="text-link" href="https://www.52pojie.cn/thread-2100899-1-1.html" target="_blank" rel="noopener noreferrer">View the reference thread ↗</a>
+      <a class="text-link" href="https://www.52pojie.cn/thread-2100899-1-1.html" target="_blank" rel="noopener noreferrer">View the reference post ↗</a>
     </section>
 
     <section id="limits" class="investigation-section">
-      <h2>07 · Evidence still needed</h2>
+      <h2>09 · Evidence still needed</h2>
       <ul class="audit-steps">
-        <li><strong>Disclosure and opt-out controls:</strong> Record the same version’s complete workflow from launch to preparation confirmation, including promotion terms, defaults, and cancellation options.</li>
-        <li><strong>Actual behavior:</strong> Compare homepage settings, processes, files, and registry changes before and after preparation and first sign-in, starting from a clean snapshot.</li>
-        <li><strong>Server-delivered files:</strong> Record responses and the hashes and signatures of actual downloads. The presence of 2345/360 strings alone is insufficient.</li>
-        <li><strong>Standard versus VIP:</strong> Compare legitimately obtained, valid states under identical conditions and settings, without altering authentication or bypassing checks.</li>
-        <li><strong>x86 comparison:</strong> Its script was extracted, but its promotion call chain has not been confirmed to match x64.</li>
+        <li><strong>Online run:</strong> record the server’s responses, the hashes and signatures of downloaded files, and what gets installed. Navigation-site strings alone are not enough.</li>
+        <li><strong>Standard versus VIP:</strong> compare legitimately obtained, valid states under identical conditions and settings, without altering authentication or bypassing checks.</li>
+        <li><strong>Disclosure outside the program:</strong> whether the website, download page, or other channels describe these behaviors.</li>
+        <li><strong>More environments:</strong> other Windows versions, and whether deployment completes normally with “Deployment control” turned off.</li>
+        <li><strong>x86 sample:</strong> its script contains exactly one function with the same structure as the promotion flag function, which suggests the same mechanism; its calls go through encrypted lookup tables that were not decoded, so the call chain remains unconfirmed.</li>
       </ul>
-      <p>None of those runtime tests were performed in this investigation. The original samples remain unchanged, and the study did not alter VIP status, system homepages, or startup entries.</p>
     </section>
 
     <section id="wording" class="investigation-section">
-      <h2>08 · Research conclusion</h2>
-      <blockquote>Our offline static analysis of an unnamed preparation tool’s x64 sample found browser homepage modification and external file download-and-execution flows. Relevant deployment settings cause the code to enter these flows; successful VIP authentication disables the associated flag. Since we did not contact the download server or run the target, the actual files and applications that would be downloaded or installed remain unknown.</blockquote>
+      <h2>10 · Research conclusion</h2>
+      <blockquote>We carried out an offline static analysis of an unnamed preparation tool’s x64 sample and one offline runtime check in a virtual machine. The sample’s promotion flow runs on every computer deployed from a prepared image: it changes the Edge startup page to a promotion address and, at the first sign-in after deployment, downloads and runs files delivered by a server without any verification; in the runtime check, all of these arrangements appeared as the code describes. The promotion flag is on by default and only VIP authentication clears it (turning off “Deployment control” as a whole also avoids it, at the cost of every deployment feature), and the in-program license agreement does not mention these behaviors. Since the tool was not run online, which files would be downloaded and which applications installed remains unknown, and these conclusions cannot be extended to other versions or to the current state of the online service.</blockquote>
     </section>
 
     <section class="investigation-section investigation-notes">
       <h2>Evidence preservation and verification</h2>
-      <p>The local analysis directory contains sample records, extraction manifests, script text, lookup tables, string tables, and read-only decoding scripts. This page includes only necessary behavioral excerpts, not target executables, full reconstructed source, or authentication key material.</p>
-      <p>Line numbers refer to this study’s reconstructed x64 <code>resolved.au3.txt</code>, which preserves extracted-script line numbers. They are not vendor source line numbers. Opaque function names are the sample’s own obfuscated identifiers. Tables and workflow descriptions are our interpretation. SHA1 checks verify decoding consistency, not software safety.</p>
-      <p>Software names, versions, sample filenames, and promotion domains are anonymized. Evidence images are typeset from the reconstructed text with original line numbers and highlighted relevant lines. Titles and annotations are translated; code remains unchanged, including original Chinese strings. These are static code excerpts, not runtime captures.</p>
-      <p>Method reference: <a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper project documentation</a>. A screenshot of a forum reply was consulted; its reported runtime behavior has not been independently reproduced.</p>
+      <p>The local analysis directory contains sample records, extraction manifests, script text, lookup tables, string tables, read-only decoding scripts, and the runtime collection results and original screenshots. This page includes only necessary behavioral excerpts and does not distribute the target EXE, complete decompiled text, or authentication key material.</p>
+      <p>Line numbers refer to the reconstructed x64 <code>resolved.au3.txt</code>, which preserves extracted-script line numbers; they are not vendor source line numbers. Opaque function names are the sample’s own obfuscated identifiers; tables and flow descriptions are this investigation’s interpretation. SHA1 consistency only checks decoded data and is not a security certification.</p>
+      <p>Software names, versions, sample filenames, and promotion domains are anonymized. Code excerpt images are typeset from the reconstructed text with original line numbers and highlighted lines; they are not runtime captures. Runtime screenshots come from the test virtual machine; the software name, deployment program path, promotion domain, and version identifier are covered with boxes, and nothing else was changed.</p>
+      <p>Method reference: <a href="https://github.com/nazywam/AutoIt-Ripper" target="_blank" rel="noopener noreferrer">AutoIt-Ripper project documentation</a>. A screenshot of a forum reply was consulted.</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-bottom"><span>JY Sysprep · Research record</span><a href="#main">Back to top ↑</a></div></footer>

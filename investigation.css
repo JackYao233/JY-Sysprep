@@ -43,3 +43,12 @@
 @media(max-width:520px){.investigation-page .nav nav{display:flex;position:static;margin-left:auto;padding:0;border:0;box-shadow:none;background:none;gap:14px}.investigation-page .brand{font-size:17px}.investigation-page .brand img{width:27px;height:27px}.investigation-page .nav{gap:10px}}
 @media(max-width:700px){.investigation-toc{grid-template-columns:1fr}}
 @media(max-width:520px){.investigation-page .nav nav a:not([aria-current]){display:none}}
+.evidence-tag.supplement{background:#eef1ff;color:#3446b8}
+:root[data-theme="dark"] .evidence-tag.supplement{background:#232c52;color:#b4c0ff}
+@media(prefers-color-scheme:dark){:root:not([data-theme]) .evidence-tag.supplement{background:#232c52;color:#b4c0ff}}
+.history-banner{display:flex;flex-direction:column;gap:6px;margin:28px 0 0;padding:16px 20px;border:1px solid #e8c98a;border-left:4px solid #d39a2c;border-radius:10px;background:#fdf6e7;color:#5a4a2a;font-size:13px;line-height:1.8}
+.history-banner strong{font-size:14px;color:#3f3214}
+.history-banner a{color:var(--blue);text-decoration:underline;text-underline-offset:3px}
+:root[data-theme="dark"] .history-banner{background:#2b2416;border-color:#6b5428;border-left-color:#d39a2c;color:#e3d3b0}
+:root[data-theme="dark"] .history-banner strong{color:#f3e5c4}
+@media(prefers-color-scheme:dark){:root:not([data-theme]) .history-banner{background:#2b2416;border-color:#6b5428;border-left-color:#d39a2c;color:#e3d3b0}:root:not([data-theme]) .history-banner strong{color:#f3e5c4}}
